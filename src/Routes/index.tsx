@@ -1,8 +1,9 @@
 import React from "react";
 import ROUTES from "./Routes";
 import { BellOutlined, HomeOutlined, PlusCircleOutlined, SearchOutlined, UserOutlined } from "@ant-design/icons";
+import { Create, Notify, Search } from "../components";
 
-const Routes = [
+const RoutesList = [
     {
         path: ROUTES.HOME,
         component: React.lazy(() => import("../pages/Home/Home")),
@@ -11,22 +12,19 @@ const Routes = [
         isMenuItem: true,
     },
     {
-        // path: ROUTES.SEARCH,
-        // component: React.lazy(() => import("../")),
+        render: <Search />,
         label: "SEARCH",
         icon: <SearchOutlined />,
         isMenuItem: true,
     },
     {
-        // path: ROUTES.NOTIFY,
-        // component: React.lazy(() => import("../")),
+        render: <Notify />,
         label: "NOTIFY",
         icon: <BellOutlined />,
         isMenuItem: true,
     },
     {
-        // path: ROUTES.CREATE,
-        // component: React.lazy(() => import("../")),
+        render: <Create />,
         label: "CREATE",
         icon: <PlusCircleOutlined />,
         isMenuItem: true,
@@ -37,12 +35,24 @@ const Routes = [
         label: "PROFILE",
         icon: <UserOutlined />,
         isMenuItem: true,
+        auth: true
     },
     {
         path: ROUTES.PAGE404,
         component: React.lazy(() => import("../pages/Page404/Page404")),
         label: "PAGE404",
+        auth: true
+    },
+    {
+        path: ROUTES.LOGIN,
+        component: React.lazy(() => import("../pages/Login/Login")),
+        auth: true
+    },
+    {
+        path: ROUTES.SIGNIN,
+        component: React.lazy(() => import("../pages/Signin/Signin")),
+        auth: true
     }
 ];
 
-export default Routes;
+export default RoutesList;

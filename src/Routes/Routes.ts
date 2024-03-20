@@ -1,10 +1,9 @@
 const ROUTES = {
     LOGIN: "/login",
     SIGNIN: "/signin",
-    HOME: "/home",
-    PROFILE: "profile",
+    HOME: "/",
+    PROFILE: "/profile",
     PAGE404: "/page404",
-
 }
 
 export default ROUTES;
