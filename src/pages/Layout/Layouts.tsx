@@ -1,14 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import RoutesList from '../../Routes';
-import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Sider from 'antd/es/layout/Sider';
-import { Drawer, Layout, Menu, MenuProps, Popconfirm } from 'antd';
+import { Drawer, Layout, Menu, Popconfirm } from 'antd';
 import './index.scss';
 import Home from '../Home/Home';
 import { Content, Footer } from 'antd/es/layout/layout';
 import { MenuOutlined } from '@ant-design/icons';
+import More from '../../components/PopUpPage/More/More';
 
 export interface LayoutsProps {
+
 }
 
 export default function Layouts(props: LayoutsProps) {
@@ -23,16 +25,25 @@ export default function Layouts(props: LayoutsProps) {
             setVisible(false);
             setTimeout(() => setVisible(true), 50);
         }
-    }, [popup])
+
+        return () => {
+
+        }
+    }, [popup]);
 
     const openModal = (components: React.ReactNode) => {
-        setPopup(components);
+        if (setPopup(components)) {
+            setPopup(components);
+        } else {
+            setVisible(false);
+        }
     }
-
 
     const MenuItems = useMemo(() => {
         return RoutesList.filter((item) => item.isMenuItem).map((menuItem) => (
             <Menu.Item
+                className='menuItem'
+                style={{ padding: '12px', margin: '4px 0', fontSize: '16px', fontWeight: 400 }}
                 onClick={() => menuItem.path ? history(menuItem.path, { replace: true }) : openModal(menuItem.render)}
                 key={menuItem.label}
                 icon={menuItem.icon}
@@ -62,41 +73,46 @@ export default function Layouts(props: LayoutsProps) {
             <Layout hasSider>
                 <Sider
                     className='menu'
-                    style={{ backgroundColor: '#FFFFFF', overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }}
+                    style={{ backgroundColor: '#FFFFFF', overflow: 'hidden', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }}
                 >
                     {/* Logo */}
-                    <div className="demo-logo-vertical">
-                        halo
+                    <div className="menu__logo">
+                        <span>GreenLand</span>
                     </div>
 
-                    <Menu mode='inline'>
+                    {/* Menu items */}
+                    <Menu mode='inline' className='menuItems'>
                         {MenuItems}
                         <Drawer
                             open={visible}
-                            onClose={() => setVisible(false)}
+                            onClose={() => { setVisible(false) }}
+                            closable={false}
                             placement={"left"}
-                            maskClassName='hidden'
-                            className='ml-72'
+                            maskClassName={'maskPopup'}
+                            style={{ marginLeft: '21rem' }}
+                            className='menuPopup'
                         >
                             {popup}
                         </Drawer>
                     </Menu>
-                    <Footer style={{ textAlign: 'center' }}>
+
+                    {/* Menu more item */}
+                    <Footer style={{ position: 'absolute', bottom: 0, width: '100%', cursor: 'pointer', display: 'flex', height: '10%', alignItems: 'center' }}>
                         <Popconfirm placement='top'
                             title
                             showCancel={false}
-                            description={<h1>hhiii</h1>}
+                            description={<More />}
                             icon={false}
                             okButtonProps={{ style: { display: 'none' } }}>
-                            <div className='menu__items__item menu__more__position'>
+                            <div style={{ display: 'flex' }}>
                                 <div><MenuOutlined /></div>
-                                <span>Xem thêm</span>
+                                <span style={{ paddingLeft: 20 }}>Xem thêm</span>
                             </div>
                         </Popconfirm>
                     </Footer>
                 </Sider>
 
-                <Layout>
+                <Layout style={{ marginLeft: 336 }}>
                     <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
                         <div
                             style={{

@@ -1,6 +1,6 @@
 import React from "react";
 import ROUTES from "./Routes";
-import { BellOutlined, HomeOutlined, PlusCircleOutlined, SearchOutlined, UserOutlined } from "@ant-design/icons";
+import { BellOutlined, HomeOutlined, PlusCircleOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 import { Create, Notify, Search } from "../components";
 
 const RoutesList = [
@@ -51,6 +51,14 @@ const RoutesList = [
     {
         path: ROUTES.SIGNIN,
         component: React.lazy(() => import("../pages/Signin/Signin")),
+        auth: true
+    },
+    {
+        path: ROUTES.SETTING,
+        component: React.lazy(() => import("../pages/setupProfile/setupProfile")),
+        label: "SETTING",
+        icon: <SettingOutlined />,
+        moreItem: true,
         auth: true
     }
 ];

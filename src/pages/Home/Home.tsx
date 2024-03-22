@@ -1,21 +1,28 @@
-import * as React from 'react';
+import { Col, Row } from 'antd';
+import React from 'react';
+import Rell from '../../components/Rell/Rell';
+import Post from '../../components/Post/Post';
+import RecommendFriend from '../../components/RecommendFriend/RecommendFriend';
 
 export interface HomeProps {
 }
 
 export default function Home(HomeProps) {
     return (
-        <div>
-            trang chủ
-            {
-                // indicates very long content
-                Array.from({ length: 100 }, (_, index) => (
-                    <React.Fragment key={index}>
-                        {index % 20 === 0 && index ? 'more' : '...'}
-                        <br />
-                    </React.Fragment>
-                ))
-            }
-        </div>
+        <Row>
+            <Col span={16}>
+                <Row>
+                    <Col span={24} style={{ backgroundColor: 'yellow' }}>
+                        <Rell />
+                    </Col>
+                    <Col span={24} style={{ backgroundColor: 'blue' }}>
+                        <Post />
+                    </Col>
+                </Row>
+            </Col>
+            <Col span={8} style={{ backgroundColor: 'red' }}>
+                <RecommendFriend />
+            </Col>
+        </Row>
     );
 }
