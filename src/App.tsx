@@ -1,15 +1,14 @@
 
-import Layouts from './pages/Layout/Layouts'
+import { RouterProvider } from 'react-router-dom'
+import RoutesList from './Routes/index'
 
 function App() {
 
   return (
     <>
-      <main>
-        <Layouts />
-      </main>
+      <RouterProvider router={RoutesList} />
     </>
   )
 }
 
-export default App
+export default App;

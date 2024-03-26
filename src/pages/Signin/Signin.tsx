@@ -1,6 +1,9 @@
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { EyeInvisibleOutlined, EyeTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
-import * as React from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import BackgroundImg from '../../../public/Devices-bro.svg';
+import './index.scss';
 
 export interface SigninProps {
 }
@@ -10,47 +13,79 @@ export default function Signin(props: SigninProps) {
         console.log('Received values of form: ', values);
     };
     return (
-        <div>
-            <div>
-                <Form
-                    name="normal_login"
-                    className="login-form"
-                    initialValues={{ remember: true }}
-                    onFinish={onFinish}
-                >
-                    <Form.Item
-                        name="username"
-                        rules={[{ required: true, message: 'Please input your Username!' }]}
-                    >
-                        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
-                    </Form.Item>
-                    <Form.Item
-                        name="password"
-                        rules={[{ required: true, message: 'Please input your Password!' }]}
-                    >
-                        <Input
-                            prefix={<LockOutlined className="site-form-item-icon" />}
-                            type="password"
-                            placeholder="Password"
-                        />
-                    </Form.Item>
-                    <Form.Item>
-                        <Form.Item name="remember" valuePropName="checked" noStyle>
-                            <Checkbox>Remember me</Checkbox>
-                        </Form.Item>
+        <div className='formSignin'>
+            <div className='formSignin__container'>
+                <div className='formSignin__main'>
+                    <img src={BackgroundImg} alt='img' />
+                </div>
+                <div className='formSignin__main'>
+                    <div className='formSignin__content'>
+                        <div className='formSignin__title'>
+                            <h3><strong>Greenland</strong> New member</h3>
+                            <p>Hello due welcome to greenland we happy to see you ✨</p>
+                        </div>
+                        <Form
+                            name="normal_login"
+                            className="login-form "
+                            initialValues={{ remember: true }}
+                            onFinish={onFinish}
+                            style={{ width: '100%' }}>
 
-                        <a className="login-form-forgot" href="">
-                            Forgot password
-                        </a>
-                    </Form.Item>
+                            <Form.Item
+                                style={{ marginBottom: '30px' }}
+                                name="username"
+                                rules={[{ required: true, message: 'Please input your Username!' }]}>
+                                <Input
+                                    size="large"
+                                    style={{ fontSize: '17px' }}
+                                    prefix={<UserOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
+                                    placeholder="Username" />
+                            </Form.Item>
 
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" className="login-form-button">
-                            Log in
-                        </Button>
-                        Or <a href="">register now!</a>
-                    </Form.Item>
-                </Form>
+                            <Form.Item
+                                style={{ marginBottom: '35px' }}
+                                name="password"
+                                rules={[{ required: true, message: 'Please input your Password!' }]}>
+                                <Input.Password
+                                    size="large"
+                                    style={{ fontSize: '17px' }}
+                                    prefix={<LockOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
+                                    type="password"
+                                    placeholder="Password"
+                                    iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
+                            </Form.Item>
+
+                            <Form.Item
+                                style={{ marginBottom: '35px' }}
+                                name="Confirm-password"
+                                rules={[{ required: true, message: 'Please confirm your Password!' }]}>
+                                <Input.Password
+                                    size="large"
+                                    style={{ fontSize: '17px' }}
+                                    prefix={<LockOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
+                                    type="password"
+                                    placeholder="Confirm Password"
+                                    iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)} />
+                            </Form.Item>
+
+                            <Form.Item
+                                className='btn-remember'
+                                name="remember"
+                                valuePropName="checked">
+                                <Checkbox>Remember me</Checkbox>
+                            </Form.Item>
+
+                            <Form.Item>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    className="login-form-button btn-custom">Sign Up
+                                </Button>
+                            </Form.Item>
+                            Already have an account? <Link to="/login" className='text-hover'>Login</Link>
+                        </Form>
+                    </div>
+                </div>
             </div>
         </div>
     );
