@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import RoutesList from '../../Routes';
+import RoutesList, { routes } from '../../Routes';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import Sider from 'antd/es/layout/Sider';
 import { Drawer, Layout, Menu, Popconfirm } from 'antd';
 import './index.scss';
-import Home from '../Home/Home';
 import { Content, Footer } from 'antd/es/layout/layout';
 import { MenuOutlined } from '@ant-design/icons';
-import More from '../../components/PopUpPage/More/More';
+import More from '../PopUpPage/More/More';
 
 export interface LayoutsProps {
 
@@ -31,7 +30,7 @@ export default function Layouts(props: LayoutsProps) {
         }
     }, [popup]);
 
-    const openModal = (components: React.ReactNode) => {
+    const openModal = (components: React.ReactElement) => {
         if (setPopup(components)) {
             setPopup(components);
         } else {
@@ -40,7 +39,7 @@ export default function Layouts(props: LayoutsProps) {
     }
 
     const MenuItems = useMemo(() => {
-        return RoutesList.filter((item) => item.isMenuItem).map((menuItem) => (
+        return routes[0].children?.filter((item) => item.isMenuItem).map((menuItem) => (
             <Menu.Item
                 className='menuItem'
                 style={{ padding: '12px', margin: '4px 0', fontSize: '16px', fontWeight: 400 }}
@@ -53,20 +52,21 @@ export default function Layouts(props: LayoutsProps) {
         ));
     }, [history]);
 
-    const listRoutes = useMemo(() => {
-        return RoutesList.filter((item) => item.auth).map((routeItems, idx) => {
-            const ComponentRender = routeItems.component;
-            return (
-                <Route
-                    key={idx}
-                    path={routeItems.path}
-                    element={<ComponentRender />}
-                    exact
-                    render
-                ></Route>
-            )
-        })
-    }, []);
+
+    // const listRoutes = useMemo(() => {
+    //     return RoutesList.filter((item) => item.auth).map((routeItems, idx) => {
+    //         const ComponentRender = routeItems.component;
+    //         return (
+    //             <Route
+    //                 key={idx}
+    //                 path={routeItems.path}
+    //                 element={<ComponentRender />}
+    //                 exact
+    //                 render
+    //             ></Route>
+    //         )
+    //     })
+    // }, []);
 
     return (
         <div>
@@ -114,7 +114,7 @@ export default function Layouts(props: LayoutsProps) {
 
                 <Layout style={{ marginLeft: 336 }}>
                     <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-                        <div
+                        {/* <div
                             style={{
                                 padding: 24,
                                 textAlign: 'center',
@@ -125,7 +125,7 @@ export default function Layouts(props: LayoutsProps) {
                                 <Route index element={<Home />}>
                                 </Route>
                             </Routes>
-                        </div>
+                        </div> */}
                     </Content>
                 </Layout>
             </Layout>

@@ -1,17 +1,37 @@
 import { EyeInvisibleOutlined, EyeTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 import './index.scss';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import BackgroundLoginImg from '../../../public/login-bg.svg';
+import { UserLogIn } from '../Types';
+import { useUserAuth } from '../../context/UserAuthContext';
+import { AnyObject } from 'antd/es/_util/type';
 
 export interface LoginProps {
 }
 
-export default function Login(props: LoginProps) {
+const initialValue: UserLogIn = {
+    email: "",
+    password: "",
+}
 
-    const onFinish = (values: any) => {
-        console.log('Received values of form: ', values);
-    };
+export default function Login() {
+
+    const { logIn } = useUserAuth();
+    const navigate = useNavigate();
+    const [userLogInfo, setUserLogInfo] = useState<UserLogIn>(initialValue);
+
+    const handleSubmitDone = async () => {
+        console.log("The user info is: ", userLogInfo);
+        await logIn(userLogInfo.email, userLogInfo.password);
+        navigate("/");
+    }
+
+    const handleSubmitFailed = async (error: AnyObject) => {
+        console.log("Error: ", error);
+    }
+
     return (
         <div className='formLogin'>
             <div className='formLogin__container'>
@@ -22,10 +42,11 @@ export default function Login(props: LoginProps) {
                             <p>Welcome back my friend ✨</p>
                         </div>
                         <Form
+                            onFinish={handleSubmitDone}
+                            onFinishFailed={handleSubmitFailed}
                             name="normal_login"
                             className="login-form "
                             initialValues={{ remember: true }}
-                            onFinish={onFinish}
                             style={{ width: '100%' }}>
 
                             <Form.Item
@@ -33,6 +54,8 @@ export default function Login(props: LoginProps) {
                                 name="username"
                                 rules={[{ required: true, message: 'Please input your Username!' }]}>
                                 <Input
+                                    onChange={(e) => { setUserLogInfo({ ...userLogInfo, email: e.target.value }) }}
+                                    value={userLogInfo.email}
                                     size="large"
                                     style={{ fontSize: '17px' }}
                                     prefix={<UserOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
@@ -44,6 +67,8 @@ export default function Login(props: LoginProps) {
                                 name="password"
                                 rules={[{ required: true, message: 'Please input your Password!' }]}>
                                 <Input.Password
+                                    onChange={(e) => { setUserLogInfo({ ...userLogInfo, password: e.target.value }) }}
+                                    value={userLogInfo.password}
                                     size="large"
                                     style={{ fontSize: '17px' }}
                                     prefix={<LockOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
@@ -78,7 +103,7 @@ export default function Login(props: LoginProps) {
                     </div>
                 </div>
                 <div className='formLogin__main'>
-                    <img src="https://preview.colorlib.com/theme/bootstrap/login-form-08/images/undraw_file_sync_ot38.svg" alt='img' />
+                    <img src={BackgroundLoginImg} alt='img' />
                 </div>
             </div>
         </div>

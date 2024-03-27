@@ -1,28 +1,12 @@
-import { Col, Row } from 'antd';
-import React from 'react';
-import Rell from '../../components/Rell/Rell';
-import Post from '../../components/Post/Post';
-import RecommendFriend from '../../components/RecommendFriend/RecommendFriend';
+import Layouts from '../../components/Layout/Layouts';
 
 export interface HomeProps {
 }
 
-export default function Home(HomeProps) {
+export default function Home() {
     return (
-        <Row>
-            <Col span={16}>
-                <Row>
-                    <Col span={24} style={{ backgroundColor: 'yellow' }}>
-                        <Rell />
-                    </Col>
-                    <Col span={24} style={{ backgroundColor: 'blue' }}>
-                        <Post />
-                    </Col>
-                </Row>
-            </Col>
-            <Col span={8} style={{ backgroundColor: 'red' }}>
-                <RecommendFriend />
-            </Col>
-        </Row>
+        <Layouts>
+            <div>home</div>
+        </Layouts>
     );
 }

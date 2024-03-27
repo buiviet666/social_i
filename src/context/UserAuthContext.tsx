@@ -2,12 +2,14 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { auth } from '../firebaseConfig';
 import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from 'firebase/auth';
 
-type Props = {}
+interface UserAuthContext {
+    children: React.ReactNode;
+}
 
 type AuthContextData = {
     user: User | null;
     logIn: typeof logIn;
-    sigIn: typeof sigIn;
+    signIn: typeof signIn;
     logOut: typeof logOut;
 };
 
@@ -15,7 +17,7 @@ const logIn = (email: string, password: string) => {
     return signInWithEmailAndPassword(auth, email, password);
 }
 
-const sigIn = (email: string, password: string) => {
+const signIn = (email: string, password: string) => {
     return createUserWithEmailAndPassword(auth, email, password);
 }
 
@@ -26,11 +28,11 @@ const logOut = () => {
 export const UserAuthContext = createContext<AuthContextData>({
     user: null,
     logIn,
-    sigIn,
+    signIn,
     logOut,
 });
 
-export const UserAuthProvider = (children: React.ReactNode) => {
+export const UserAuthProvider: React.FunctionComponent<UserAuthContext> = ({ children }) => {
 
     const [user, setUser] = useState<User | null>(null);
 
@@ -51,7 +53,7 @@ export const UserAuthProvider = (children: React.ReactNode) => {
     const value: AuthContextData = {
         user,
         logIn,
-        sigIn,
+        signIn,
         logOut,
     }
 

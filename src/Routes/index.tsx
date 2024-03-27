@@ -25,7 +25,7 @@ interface CustomRouter {
     errorElement?: React.ReactElement;
 }
 
-const routes: CustomRouter[] = [
+export const routes: CustomRouter[] = [
     {
         element: <ProtectedRoutes />,
         children: [
