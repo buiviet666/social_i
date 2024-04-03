@@ -2,6 +2,7 @@ import { AntDesignOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/ic
 import { Avatar, Col, GetProp, message, Row, Tabs, Upload, UploadProps } from 'antd';
 import { Footer } from 'antd/es/layout/layout';
 import React, { useState } from 'react';
+import Layouts from '../../components/Layout/Layouts';
 
 export interface ProfileProps {
 }
@@ -54,48 +55,50 @@ export default function Profile(props: ProfileProps) {
 
     return (
         <>
-            <Row>
-                <Col>
-                    <Avatar
-                        size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
-                        icon={<AntDesignOutlined />}
-                    />
-                </Col>
-                <Col>thong tin</Col>
+            <Layouts>
                 <Row>
-                    rell highlight
+                    <Col>
+                        <Avatar
+                            size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
+                            icon={<AntDesignOutlined />}
+                        />
+                    </Col>
+                    <Col>thong tin</Col>
+                    <Row>
+                        rell highlight
+                    </Row>
                 </Row>
-            </Row>
-            <Row>
-                <Upload
-                    name="avatar"
-                    listType="picture-circle"
-                    className="avatar-uploader"
-                    showUploadList={false}
-                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                    beforeUpload={beforeUpload}
-                    onChange={handleChange}
-                >
-                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                </Upload>
-            </Row>
-            <Row>
-                <Tabs
-                    defaultActiveKey="1"
-                    centered
-                    items={new Array(3).fill(null).map((_, i) => {
-                        const id = String(i + 1);
-                        return {
-                            label: `Tab ${id}`,
-                            key: id,
-                            children: `Content of Tab Pane ${id}`,
-                        };
-                    })}
-                />
-            </Row>
-            <Footer>
-                day trang
-            </Footer>
+                <Row>
+                    <Upload
+                        name="avatar"
+                        listType="picture-circle"
+                        className="avatar-uploader"
+                        showUploadList={false}
+                        action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
+                        beforeUpload={beforeUpload}
+                        onChange={handleChange}
+                    >
+                        {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
+                    </Upload>
+                </Row>
+                <Row>
+                    <Tabs
+                        defaultActiveKey="1"
+                        centered
+                        items={new Array(3).fill(null).map((_, i) => {
+                            const id = String(i + 1);
+                            return {
+                                label: `Tab ${id}`,
+                                key: id,
+                                children: `Content of Tab Pane ${id}`,
+                            };
+                        })}
+                    />
+                </Row>
+                <Footer>
+                    day trang
+                </Footer>
+            </Layouts>
         </>
     );
 }

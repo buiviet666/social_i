@@ -11,6 +11,7 @@ export interface SigninProps {
 }
 
 const initialValue: UserSignIn = {
+    displayName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -52,15 +53,28 @@ export default function Signin() {
 
                             <Form.Item
                                 style={{ marginBottom: '30px' }}
-                                name="username"
-                                rules={[{ required: true, message: 'Please input your Username!' }]}>
+                                name="NameUser"
+                                rules={[{ required: true, message: 'Please input your Name!' }]}>
+                                <Input
+                                    onChange={(e) => { setUserInfo({ ...userInfor, displayName: e.target.value }) }}
+                                    value={userInfor.displayName}
+                                    size="large"
+                                    style={{ fontSize: '17px' }}
+                                    prefix={<UserOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
+                                    placeholder="Name" />
+                            </Form.Item>
+
+                            <Form.Item
+                                style={{ marginBottom: '30px' }}
+                                name="email"
+                                rules={[{ required: true, message: 'Please input your Email!' }]}>
                                 <Input
                                     onChange={(e) => { setUserInfo({ ...userInfor, email: e.target.value }) }}
                                     value={userInfor.email}
                                     size="large"
                                     style={{ fontSize: '17px' }}
                                     prefix={<UserOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
-                                    placeholder="Username & email" />
+                                    placeholder="Email" />
                             </Form.Item>
 
                             <Form.Item

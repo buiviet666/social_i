@@ -1,0 +1,25 @@
+.itemsProfile {
+    display: flex;
+    padding: 0 16px;
+
+    & .ant-list-item-meta-content {
+        padding-left: 15px;
+        line-height: 1.2;
+    }
+}
+
+.recommendFriend__main {
+    background: none !important;
+    height: 100vh;
+    padding-left: 64px;
+    flex: none !important;
+    max-width: unset !important;
+    min-width: unset !important;
+    width: 370px !important;
+    display: block;
+
+    & .ant-list-item {
+        padding: 8px 16px;
+        
+    }
+}

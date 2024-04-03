@@ -1,6 +1,6 @@
 import React from "react";
 import ROUTES from "./Routes";
-import { BellOutlined, HomeOutlined, PlusCircleOutlined, SearchOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
+import { BellOutlined, HomeOutlined, PlusCircleOutlined, SearchOutlined, UserOutlined } from "@ant-design/icons";
 import { Create, Notify, Search } from "../components";
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoutes from "../components/ProtectedRoutes/ProtectedRoutes";
@@ -19,10 +19,10 @@ interface CustomRouter {
     label?: string;
     isMenuItem?: boolean;
     icon?: React.ReactElement;
-    render?: React.ReactElement;
+    render?: boolean;
     auth?: boolean;
-    moreItem?: boolean;
     errorElement?: React.ReactElement;
+    popUp?: boolean;
 }
 
 export const routes: CustomRouter[] = [
@@ -38,25 +38,29 @@ export const routes: CustomRouter[] = [
                 errorElement: <Page404 />
             },
             {
-                render: <Search />,
+                element: <Search />,
                 label: "SEARCH",
                 icon: <SearchOutlined />,
                 isMenuItem: true,
-                errorElement: <Page404 />
+                errorElement: <Page404 />,
+                render: true,
             },
             {
-                render: <Notify />,
+                element: <Notify />,
                 label: "NOTIFY",
                 icon: <BellOutlined />,
                 isMenuItem: true,
-                errorElement: <Page404 />
+                errorElement: <Page404 />,
+                render: true,
             },
             {
-                render: <Create />,
+                element: <Create />,
                 label: "CREATE",
                 icon: <PlusCircleOutlined />,
                 isMenuItem: true,
-                errorElement: <Page404 />
+                errorElement: <Page404 />,
+                popUp: true,
+                render: true,
             },
             {
                 path: ROUTES.PROFILE,
@@ -78,8 +82,6 @@ export const routes: CustomRouter[] = [
                 path: ROUTES.SETTING,
                 element: <SetupProfile />,
                 label: "SETTING",
-                icon: <SettingOutlined />,
-                moreItem: true,
                 auth: true,
                 errorElement: <Page404 />
             }
