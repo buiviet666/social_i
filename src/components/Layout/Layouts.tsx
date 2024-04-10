@@ -117,7 +117,7 @@ export default function Layouts({ children }: LayoutsProps) {
                 </Menu>
             </Sider>
 
-            <Layout style={{ marginLeft: 336, backgroundColor: 'rgb(255, 255,255)' }}>
+            <Layout style={{ marginLeft: 336, backgroundColor: 'rgb(255, 255, 255)' }}>
                 {children}
             </Layout>
         </Layout>

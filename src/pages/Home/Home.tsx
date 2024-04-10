@@ -8,12 +8,13 @@ import Rell from '../../components/Rell/Rell';
 import { AntDesignOutlined } from '@ant-design/icons';
 import './index.scss';
 import { useUserAuth } from '../../context/UserAuthContext';
+import Footers from '../../components/Footers/Footers';
 
 export interface HomeProps {
 }
 
-export default function Home(props: HomeProps) {
-
+export default function Home() {
+    // props: HomeProps
     const { user } = useUserAuth();
     return (
         <Layouts>
@@ -34,8 +35,8 @@ export default function Home(props: HomeProps) {
                         title={<a href='#'><strong>{user?.email}</strong></a>}
                         description="nickname" />
                     <RecommendFriend />
-                    <Footer style={{ background: 'none' }}>
-                        <h1>jasjdjawjrjwr</h1>
+                    <Footer style={{ background: 'none', color: '#C7C7C7' }}>
+                        <Footers />
                     </Footer>
                 </Sider>
             </Content>

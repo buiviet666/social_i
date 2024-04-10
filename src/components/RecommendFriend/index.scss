@@ -1,3 +1,10 @@
 .recommend__main {
     margin: 24px 16px 8px;
+
+    &__title {
+        display: block;
+        padding: 4px 16px;
+        color: rgb(115, 115, 115);
+        font-size: 14px;
+    }
 }

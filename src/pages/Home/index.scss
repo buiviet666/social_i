@@ -20,6 +20,10 @@
 
     & .ant-list-item {
         padding: 8px 16px;
-        
+    }
+
+    & .ant-layout-sider-children {
+        position: fixed;
+        width: 370px;
     }
 }

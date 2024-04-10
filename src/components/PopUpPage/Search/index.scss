@@ -1,0 +1,50 @@
+.popupSearch__main {
+    // width: 100%;
+    // height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.popupSearch__title {
+    padding: 12px 14px 36px 24px;
+    margin: 8px 0;
+
+    & span {
+        max-width: 100%;
+        min-width: 0;
+        display: block;
+        text-align: left;
+        font-size: 24px;
+    }
+}
+
+.popupSearch__content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &__input {
+        margin: 0 16px 24px;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        min-width: 125px;
+    }
+
+    &__data {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding-top: 12px;
+
+        &-text {
+            padding-top: 4px;
+            margin: 6px 24px 8px;
+            display: flex;
+            justify-content: space-between;
+            flex-direction: row;
+        }
+    }
+}

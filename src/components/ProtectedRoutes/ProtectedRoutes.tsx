@@ -6,7 +6,8 @@ import { useAuthState } from "react-firebase-hooks/auth";
 export interface ProtectedRoutesProps {
 }
 
-export default function ProtectedRoutes(props: ProtectedRoutesProps) {
+export default function ProtectedRoutes() {
+    // props: ProtectedRoutesProps
 
     const auth = getAuth();
     const [user, loading] = useAuthState(auth);

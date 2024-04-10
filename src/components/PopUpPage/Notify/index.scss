@@ -1,0 +1,29 @@
+.popupNotify {
+    // width: 100%;
+    // height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    & .ant-list-item {
+        border-block-end: unset;
+    }
+}
+
+.popupNotify__title {
+    padding: 12px 14px 36px 24px;
+    margin: 8px 0;
+
+    & span {
+        max-width: 100%;
+        min-width: 0;
+        display: block;
+        text-align: left;
+        font-size: 24px;
+    }
+}
+
+.popupNotify__content {
+    padding: 0 24px;
+    margin-bottom: 18px;
+    display: flex;
+}

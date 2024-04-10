@@ -1,27 +1,28 @@
-import { Button, Divider, Form, Input, Layout, message, Space, Upload, UploadProps } from 'antd';
+import { Button, Divider, Form, Layout, Space } from 'antd';
 import { Content, Footer } from 'antd/es/layout/layout';
-import React, { useState } from 'react';
-import FileUploader from '../../FileUploader/FileUploader';
-import { useUserAuth } from '../../../context/UserAuthContext';
-import { FileEntry, Post } from '../../../pages/Types';
-import { UserOutlined } from '@ant-design/icons';
+// import React, { useState } from 'react';
+// import FileUploader from '../../FileUploader/FileUploader';
+// import { useUserAuth } from '../../../context/UserAuthContext';
+// import { FileEntry, Post } from '../../../pages/Types';
+// import { UserOutlined } from '@ant-design/icons';
 
 export interface CreateProps {
 }
 
-export function Create(props: CreateProps) {
+export function Create() {
+    // props: CreateProps
 
-    const { user } = useUserAuth();
-    const [fileEntry, setFileEntry] = useState<FileEntry>({ files: [], })
+    // const { user } = useUserAuth();
+    // const [fileEntry, setFileEntry] = useState<FileEntry>({ files: [], })
 
-    const [post, setPost] = useState<Post>({
-        // nameUser: user?.displayName,
-        date: new Date(),
-        likes: 0,
-        photos: [],
-        userId: null,
-        caption: "",
-    })
+    // const [post, setPost] = useState<Post>({
+    //     // nameUser: user?.displayName,
+    //     date: new Date(),
+    //     likes: 0,
+    //     photos: [],
+    //     userId: null,
+    //     caption: "",
+    // })
 
     // const updatePhoto: UploadProps = {
     //     name: 'file',
@@ -89,15 +90,15 @@ export function Create(props: CreateProps) {
                             style={{ marginBottom: '30px' }}
                             name="email"
                             rules={[{ required: true, message: 'Please input your Email!' }]}>
-                            <Input
+                            {/* <Input
                                 onChange={(e) => { setPost({ ...post, caption: e.target.value }) }}
                                 value={post.caption}
                                 size="large"
                                 style={{ fontSize: '17px' }}
                                 prefix={<UserOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
-                                placeholder="Viết chú thích..." />
+                                placeholder="Viết chú thích..." /> */}
                         </Form.Item>
-                        <FileUploader fileEntry={fileEntry} onChange={setFileEntry} />
+                        {/* <FileUploader fileEntry={fileEntry} onChange={setFileEntry} /> */}
                     </Content>
                     <Footer>
                         <Form.Item wrapperCol={{ span: 12, offset: 6 }}>

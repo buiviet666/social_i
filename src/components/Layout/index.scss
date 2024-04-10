@@ -76,6 +76,14 @@
     border-right: solid 1px rgb(219, 219, 219);
     border-top-right-radius: 16px;
     box-shadow: 50px 0px 50px -50px;
+
+    & .ant-drawer-body {
+        padding: 8px 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
 }
 
 .maskPopup {
