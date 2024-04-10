@@ -1,6 +1,6 @@
 import { EyeInvisibleOutlined, EyeTwoTone, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Checkbox, Form, Input } from 'antd';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './index.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import BackgroundLoginImg from '../../../public/login-bg.svg';

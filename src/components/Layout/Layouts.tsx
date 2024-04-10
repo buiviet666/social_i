@@ -11,23 +11,33 @@ interface LayoutsProps {
     children: React.ReactNode;
 }
 
+interface MenuItem {
+    path?: string;
+    element?: React.ReactElement;
+    label?: string;
+    isMenuItem?: boolean;
+    icon?: React.ReactElement;
+    render?: boolean;
+    popUp?: boolean;
+}
+
 export default function Layouts({ children }: LayoutsProps) {
 
     const { logOut } = useUserAuth();
     const history = useNavigate();
 
-    const [create, setCreate] = useState({
+    const [create, setCreate] = useState<{ element: React.ReactElement | null; isOpen: boolean }>({
         element: null,
         isOpen: false,
     });
 
-    const [drawer, setDrawer] = useState({
+    const [drawer, setDrawer] = useState<{ element: React.ReactElement | null; isOpen: boolean }>({
         element: null,
         isOpen: false,
     });
 
     const MenuItems = useMemo(() => {
-        return routes[0].children?.filter((item) => item.isMenuItem).map((menuItem) => (
+        return routes[0].children?.filter((item) => item.isMenuItem).map((menuItem: MenuItem) => (
             <Menu.Item
                 className='items'
                 key={menuItem.label}
@@ -37,9 +47,9 @@ export default function Layouts({ children }: LayoutsProps) {
                         history(menuItem.path, { replace: true });
                     } else if (menuItem.render) {
                         if (menuItem.popUp) {
-                            setCreate({ element: menuItem.element, isOpen: true });
+                            setCreate({ element: menuItem.element || null, isOpen: true });
                         } else {
-                            setDrawer({ element: menuItem.element, isOpen: true });
+                            setDrawer({ element: menuItem.element || null, isOpen: true });
                         }
                     } else {
                         setCreate({ element: null, isOpen: false });

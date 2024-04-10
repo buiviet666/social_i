@@ -1,5 +1,5 @@
 import { Avatar, Divider, List } from 'antd';
-import React from 'react';
+// import React from 'react';
 import './index.scss';
 
 export interface NotifyProps {

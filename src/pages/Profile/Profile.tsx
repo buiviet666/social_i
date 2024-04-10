@@ -1,7 +1,7 @@
 import { AntDesignOutlined, LoadingOutlined, PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { Avatar, GetProp, Layout, message, Tabs, Upload, UploadProps } from 'antd';
 import { Content, Footer, Header } from 'antd/es/layout/layout';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Layouts from '../../components/Layout/Layouts';
 import './index.scss'
 import Footers from '../../components/Footers/Footers';

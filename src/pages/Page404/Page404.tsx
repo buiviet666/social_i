@@ -1,5 +1,5 @@
 import { Button, Result } from 'antd';
-import * as React from 'react';
+// import * as React from 'react';
 
 export interface Page404Props {
 }
