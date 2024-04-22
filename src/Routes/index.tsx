@@ -13,6 +13,7 @@ const Signin = React.lazy(() => import("../pages/Signin/Signin"));
 const SetupProfile = React.lazy(() => import("../pages/setupProfile/setupProfile"));
 
 interface CustomRouter {
+    key?: string;
     path?: string;
     element?: React.ReactElement;
     children?: CustomRouter[];
@@ -35,7 +36,8 @@ export const routes: CustomRouter[] = [
                 label: "HOME",
                 icon: <HomeOutlined />,
                 isMenuItem: true,
-                errorElement: <Page404 />
+                errorElement: <Page404 />,
+                key: '0'
             },
             {
                 element: <Search />,
@@ -44,6 +46,7 @@ export const routes: CustomRouter[] = [
                 isMenuItem: true,
                 errorElement: <Page404 />,
                 render: true,
+                key: '1'
             },
             {
                 element: <Notify />,
@@ -52,6 +55,7 @@ export const routes: CustomRouter[] = [
                 isMenuItem: true,
                 errorElement: <Page404 />,
                 render: true,
+                key: '2'
             },
             {
                 element: <Create />,
@@ -61,6 +65,7 @@ export const routes: CustomRouter[] = [
                 errorElement: <Page404 />,
                 popUp: true,
                 render: true,
+                key: '3',
             },
             {
                 path: ROUTES.PROFILE,
@@ -69,36 +74,42 @@ export const routes: CustomRouter[] = [
                 icon: <UserOutlined />,
                 isMenuItem: true,
                 auth: true,
-                errorElement: <Page404 />
+                errorElement: <Page404 />,
+                key: '4',
             },
             {
                 path: ROUTES.PAGE404,
                 element: <Page404 />,
                 label: "PAGE404",
                 auth: true,
-                errorElement: <Page404 />
+                errorElement: <Page404 />,
+                key: '5',
             },
             {
                 path: ROUTES.SETTING,
                 element: <SetupProfile />,
                 label: "SETTING",
                 auth: true,
-                errorElement: <Page404 />
+                errorElement: <Page404 />,
+                key: '6',
             }
         ],
-        errorElement: <Page404 />
+        errorElement: <Page404 />,
+        key: '8',
     },
     {
         path: ROUTES.LOGIN,
         element: <Login />,
         auth: true,
-        errorElement: <Page404 />
+        errorElement: <Page404 />,
+        key: '9'
     },
     {
         path: ROUTES.SIGNIN,
         element: <Signin />,
         auth: true,
-        errorElement: <Page404 />
+        errorElement: <Page404 />,
+        key: '10'
     }];
 
 const RoutesList = createBrowserRouter(routes);

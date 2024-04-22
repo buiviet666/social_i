@@ -19,6 +19,7 @@ interface MenuItem {
     icon?: React.ReactElement;
     render?: boolean;
     popUp?: boolean;
+    key?: string;
 }
 
 export default function Layouts({ children }: LayoutsProps) {
@@ -40,7 +41,7 @@ export default function Layouts({ children }: LayoutsProps) {
         return routes[0].children?.filter((item) => item.isMenuItem).map((menuItem: MenuItem) => (
             <Menu.Item
                 className='items'
-                key={menuItem.label}
+                key={menuItem.key}
                 icon={menuItem.icon}
                 onClick={() => {
                     if (menuItem.path) {
@@ -82,54 +83,62 @@ export default function Layouts({ children }: LayoutsProps) {
     ];
 
     return (
-        <Layout hasSider>
-            <Sider
-                className='menu'
-                style={{ backgroundColor: '#FFFFFF', overflow: 'hidden', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: '99999' }}>
-                {/* Logo */}
-                <Link to="/" className="menu__logo">
-                    <span>GreenLand</span>
-                </Link>
+        <>
+            <Layout>
+                <Sider
+                    className='menu'
+                    style={{ backgroundColor: '#FFFFFF', overflow: 'hidden', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: '99999' }}>
+                    {/* Logo */}
+                    <Link to="/" className="menu__logo">
+                        <span>GreenLand</span>
+                    </Link>
 
-                {/* Menu items */}
-                <Menu mode='inline' className='menuItems'>
-                    {MenuItems}
-                    <Drawer
-                        open={drawer.isOpen}
-                        onClose={() => { setDrawer({ element: null, isOpen: false }) }}
-                        closable={false}
-                        placement={"left"}
-                        maskClassName={'maskPopup'}
-                        style={{ marginLeft: '21rem' }}
-                        className='menuPopup'>
-                        {drawer.element}
-                    </Drawer>
-                    <Modal
-                        open={create.isOpen}
-                        onCancel={() => { setCreate({ element: null, isOpen: false }) }}>
-                        {create.element}
-                    </Modal>
+                    {/* Menu items */}
+                    <Menu mode='inline' className='menuItems'>
+                        {MenuItems}
 
-                    {/* Menu more item */}
-                    <Dropdown
-                        className='menuItemsDropdown'
-                        menu={{ items }}
-                        trigger={['click']}
-                        placement='top'>
-                        <Menu.Item
-                            onClick={(e) => e.domEvent.preventDefault()}
-                            className='items positionBottom'
-                            style={{ paddingLeft: '24px' }}
-                            icon={<MenuOutlined />}>
-                            <span>MORE</span>
-                        </Menu.Item>
-                    </Dropdown>
-                </Menu>
-            </Sider>
 
-            <Layout style={{ marginLeft: 336, backgroundColor: 'rgb(255, 255, 255)' }}>
-                {children}
+                        {/* Menu more item */}
+                        <Dropdown
+                            className='menuItemsDropdown'
+                            menu={{ items }}
+                            trigger={['click']}
+                            placement='top'>
+                            <Menu.Item
+                                onClick={(e) => e.domEvent.preventDefault()}
+                                className='items positionBottom'
+                                style={{ paddingLeft: '24px' }}
+                                icon={<MenuOutlined />}>
+                                <span>MORE</span>
+                            </Menu.Item>
+                        </Dropdown>
+                    </Menu>
+                </Sider>
+
+                <Layout style={{ marginLeft: 336, backgroundColor: 'rgb(255, 255, 255)' }}>
+                    {children}
+                </Layout>
             </Layout>
-        </Layout>
+            <Drawer
+                open={drawer.isOpen}
+                onClose={() => { setDrawer({ element: null, isOpen: false }) }}
+                closable={false}
+                placement={"left"}
+                maskClassName={'maskPopup'}
+                style={{ marginLeft: '21rem' }}
+                className='menuPopup'>
+                {drawer.element}
+            </Drawer>
+            <Modal
+                width={1040}
+                style={{ paddingTop: '2px' }}
+                closeIcon={null}
+                cancelButtonProps={{ style: { display: 'none' } }}
+                okButtonProps={{ style: { display: 'none' } }}
+                open={create.isOpen}
+                onCancel={() => { setCreate({ element: null, isOpen: false }) }}>
+                {create.element}
+            </Modal>
+        </>
     );
 }

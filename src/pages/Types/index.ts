@@ -17,7 +17,6 @@ export interface FileEntry {
 }
 
 export interface Post {
-    // nameUser: string;
     date: Date;
     likes: number;
     photos: PhotoMeta[];

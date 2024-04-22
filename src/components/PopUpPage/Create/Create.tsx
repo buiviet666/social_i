@@ -1,10 +1,11 @@
-import { Button, Divider, Form, Layout, Space } from 'antd';
-import { Content, Footer } from 'antd/es/layout/layout';
-// import React, { useState } from 'react';
-// import FileUploader from '../../FileUploader/FileUploader';
-// import { useUserAuth } from '../../../context/UserAuthContext';
-// import { FileEntry, Post } from '../../../pages/Types';
-// import { UserOutlined } from '@ant-design/icons';
+import { Avatar, Button, Divider, Form, Input } from 'antd';
+import React, { useState } from 'react';
+import './index.scss';
+import FileUploader from '../../FileUploader/FileUploader';
+import { AntDesignOutlined, CloudUploadOutlined } from '@ant-design/icons';
+import { FileEntry, PhotoMeta, Post } from '../../../pages/Types';
+import blocksStyles from '@uploadcare/blocks/web/lr-file-uploader-regular.min.css?url';
+import { useUserAuth } from '../../../context/UserAuthContext';
 
 export interface CreateProps {
 }
@@ -12,105 +13,124 @@ export interface CreateProps {
 export function Create() {
     // props: CreateProps
 
-    // const { user } = useUserAuth();
-    // const [fileEntry, setFileEntry] = useState<FileEntry>({ files: [], })
+    const { user } = useUserAuth();
+    const [photoFileEntry, setPhotoFileEntry] = useState<FileEntry>({ files: [] });
+    const [post, setPost] = useState<Post>({
+        date: new Date(),
+        likes: 0,
+        photos: [],
+        userId: null,
+        caption: "",
+    });
 
-    // const [post, setPost] = useState<Post>({
-    //     // nameUser: user?.displayName,
-    //     date: new Date(),
-    //     likes: 0,
-    //     photos: [],
-    //     userId: null,
-    //     caption: "",
-    // })
-
-    // const updatePhoto: UploadProps = {
-    //     name: 'file',
-    //     action: 'https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188',
-    //     headers: {
-    //         authorization: 'authorization-text',
-    //     },
-    //     onChange(info) {
-    //         if (info.file.status !== 'uploading') {
-    //             console.log(info.file, info.fileList);
-    //         }
-    //         if (info.file.status === 'done') {
-    //             message.success(`${info.file.name} file uploaded successfully`);
-    //         } else if (info.file.status === 'error') {
-    //             message.error(`${info.file.name} file upload failed.`);
-    //         }
-    //     },
+    // const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //     console.log('Change:', e.target.value);
     // };
 
-    const formItemLayout = {
-        labelCol: { span: 6 },
-        wrapperCol: { span: 14 }
+    const onFinish = (values: React.ReactElement) => {
+        console.log('Received values of form: ', values);
+    };
+
+
+    const submitPost = async (e: React.MouseEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+
+        console.log("create post: ", post);
+
+        const photoMeta: PhotoMeta[] = photoFileEntry.files.map((file) => {
+            return {
+                cdnUrl: file.cdnUrl,
+                uuid: file.uuid,
+            }
+        });
+
+        if (user != null) {
+            const newPost: Post = {
+                ...post,
+                userId: user?.uid || null,
+                photos: photoMeta,
+            };
+            console.log("finall: ", newPost);
+        }
     }
 
-    const onFinish = (value: string) => {
-        console.log('value from form: ', value);
-    }
-
-    // const normFile = (e: any) => {
-    //     console.log('upload even: ', e);
-    //     if (Array.isArray(e)) {
-    //         return e;
-    //     }
-    //     return e?.fileList
-    // }
 
     return (
-        <div>
-            <h1>tạo bài viết mới</h1>
-            <Divider />
-            {/* <div>
-                <Upload {...updatePhoto}>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                </Upload>
-            </div> */}
+        <div className='create'>
             <Form
-                name='validate_other'
-                {...formItemLayout}
-                onFinish={onFinish}
-                style={{ maxWidth: 600 }}>
-                <Layout>
-                    <Content>
-                        {/* <Form.Item
-                            name="upload"
-                            label="Upload"
-                            valuePropName="fileList"
-                            getValueFromEvent={normFile}
-                            extra="longgggggggggggggggggggggggggggggggggg"
-                        >
-                            <Upload name="logo" action="/upload.do" listType="picture">
-                                <Button icon={<UploadOutlined />}>Click to upload</Button>
-                            </Upload>
-                        </Form.Item> */}
+                // onFinish={onFinish}
+                initialValues={post}>
+                <div className='create__option'>
+                    {/* <div>
+                    <Button type="link">Back</Button>
+                </div> */}
+                    <div className='create__title'>
+                        <span><strong>Create New Post</strong></span>
+                    </div>
+                    <Form.Item
+                        style={{ margin: 0 }}>
+                        <Button type="link" htmlType="submit" onClick={submitPost}>Post</Button>
+                    </Form.Item>
+                </div>
+                <Divider />
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    <div className='create__content'>
+
                         <Form.Item
-                            style={{ marginBottom: '30px' }}
-                            name="email"
-                            rules={[{ required: true, message: 'Please input your Email!' }]}>
-                            {/* <Input
-                                onChange={(e) => { setPost({ ...post, caption: e.target.value }) }}
-                                value={post.caption}
-                                size="large"
-                                style={{ fontSize: '17px' }}
-                                prefix={<UserOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
-                                placeholder="Viết chú thích..." /> */}
+                            name="upload"
+                        // rules={[{ required: true, message: 'Please input your photo' }]}
+                        >
+                            <FileUploader fileEntry={photoFileEntry} onChange={setPhotoFileEntry} />
                         </Form.Item>
-                        {/* <FileUploader fileEntry={fileEntry} onChange={setFileEntry} /> */}
-                    </Content>
-                    <Footer>
-                        <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
-                            <Space>
-                                <Button type="primary" htmlType="submit">
-                                    Submit
-                                </Button>
-                                <Button htmlType="reset">reset</Button>
-                            </Space>
-                        </Form.Item>
-                    </Footer>
-                </Layout>
+
+
+                    </div>
+                    <div className='create__description'>
+                        <div style={{ margin: '16px' }}>
+                            <Avatar icon={<AntDesignOutlined />} />
+                            <span style={{ marginLeft: '12px' }}><strong>Name</strong></span>
+                        </div>
+                        <div style={{ padding: '0 16px', border: 'unset' }}>
+                            <Form.Item
+                                name="description"
+                                rules={[{ required: true, message: 'Please input your description' }]}>
+                                <Input.TextArea
+                                    onChange={(e) => { setPost({ ...post, caption: e.target.value }) }}
+                                    value={post.caption}
+                                    showCount
+                                    maxLength={2100}
+                                    placeholder="Description..."
+                                    style={{ height: 168, resize: 'none', border: 'unset', fontSize: '16px', marginBottom: '40px' }}
+                                />
+                            </Form.Item>
+                        </div>
+                        <div className='create__content__upload'>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <CloudUploadOutlined />
+                                <span style={{ marginTop: '16px', marginBottom: '6px' }}>Pick your picture</span>
+
+                                {/* chức năng của khung chọn */}
+                                <lr-config
+                                    ctx-name="my-uploader"
+                                    pubkey="71ae8ebb306291f26f62"
+                                    multiple={true}
+                                    confirmUpload={false}
+                                    removeCopyright={true}
+                                    imgOnly={true}>
+                                </lr-config>
+
+                                {/* khung chọn */}
+                                <lr-file-uploader-regular
+                                    ctx-name="my-uploader"
+                                    css-src={blocksStyles}>
+                                </lr-file-uploader-regular>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </Form>
         </div>
     );

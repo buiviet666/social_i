@@ -1,0 +1,57 @@
+.create {
+    display: flex;
+    flex-direction: column;
+
+    &__option {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    &__title {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        padding: 15px 0;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        width: 700px;
+        height: 100%;
+        border-right: 1px solid rgba(5, 5, 5, 0.06);
+
+        &__upload {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            align-items: center;
+            padding: 24px;
+            justify-content: center;
+            align-self: auto;
+            flex-grow: 0;
+        }
+    }
+
+    &__description {
+        display: flex;
+        flex-direction: column;
+        width: 340px;
+    }
+
+    & .ant-divider {
+        margin: 0;
+    }
+}
+
+.ant-input-outlined:focus-within {
+    border-color: unset !important;
+    box-shadow: unset !important;
+}
+
+.ant-input-data-count {
+    font-size: 12px;
+}
