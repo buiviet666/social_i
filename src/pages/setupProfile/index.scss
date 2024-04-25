@@ -1,0 +1,71 @@
+.ant-layout {
+    background-color: rgb(255, 255, 255) !important;
+}
+
+.ant-row {
+    flex-direction: column;
+}
+
+.ant-form-item-label {
+    text-align: unset !important;
+    font-weight: 600;
+}
+
+.setup__profile {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    &__container {
+        max-width: 706px;
+        min-height: calc(-135px + 100vh);
+        width: 100%;
+        display: flex;
+        align-self: center;
+        flex-direction: column;
+        padding: 36px 48px;
+    }
+
+    &__title {
+        padding: 12px 0;
+        margin-bottom: 16px;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    &__avatar {
+        margin-top: 16px;
+        margin-bottom: 40px;
+
+        &__container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 16px;
+            background-color: rgb(239, 239, 239);
+            border-radius: 16px;
+            align-items: center;
+        }
+    }
+}
+
+.btn_edit_profile {
+    background-color: #1677ff !important;
+}
+
+.btn_edit_profile:hover {
+    opacity: 0.6;
+}
+
+.edit__profile__main {
+    background: rgb(255, 255, 255);
+    padding: 0 16px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 52px;
+
+    & span {
+        display: flex;
+        justify-content: center;
+    }
+}

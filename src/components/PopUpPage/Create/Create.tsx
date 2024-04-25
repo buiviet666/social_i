@@ -6,6 +6,8 @@ import { AntDesignOutlined, CloudUploadOutlined } from '@ant-design/icons';
 import { FileEntry, PhotoMeta, Post } from '../../../pages/Types';
 import blocksStyles from '@uploadcare/blocks/web/lr-file-uploader-regular.min.css?url';
 import { useUserAuth } from '../../../context/UserAuthContext';
+import { createPost } from '../../../repository/post.service';
+import { useNavigate } from 'react-router-dom';
 
 export interface CreateProps {
 }
@@ -14,6 +16,7 @@ export function Create() {
     // props: CreateProps
 
     const { user } = useUserAuth();
+    const navigate = useNavigate();
     const [photoFileEntry, setPhotoFileEntry] = useState<FileEntry>({ files: [] });
     const [post, setPost] = useState<Post>({
         date: new Date(),
@@ -21,6 +24,7 @@ export function Create() {
         photos: [],
         userId: null,
         caption: "",
+        userlikes: [],
     });
 
     // const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,7 +38,6 @@ export function Create() {
 
     const submitPost = async (e: React.MouseEvent<HTMLFormElement>) => {
         e.preventDefault();
-
 
         console.log("create post: ", post);
 
@@ -52,6 +55,11 @@ export function Create() {
                 photos: photoMeta,
             };
             console.log("finall: ", newPost);
+            await createPost(newPost);
+
+            navigate("/");
+        } else {
+            navigate("/login");
         }
     }
 
@@ -76,15 +84,13 @@ export function Create() {
                 <Divider />
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <div className='create__content'>
-
                         <Form.Item
                             name="upload"
+                            style={{ marginBottom: '0' }}
                         // rules={[{ required: true, message: 'Please input your photo' }]}
                         >
                             <FileUploader fileEntry={photoFileEntry} onChange={setPhotoFileEntry} />
                         </Form.Item>
-
-
                     </div>
                     <div className='create__description'>
                         <div style={{ margin: '16px' }}>

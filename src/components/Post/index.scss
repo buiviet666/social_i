@@ -37,18 +37,34 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        position: relative;
 
         &__container {
             margin: 4px 0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
             align-items: center;
+            width: 470px;
+            height: 40px;
+            flex-direction: row;
+            justify-content: space-between;
 
             &__save {
-                margin-left: auto;
-                margin-right: 0;
                 font-size: 24px;
+                position: absolute;
+                right: 0;
             }
         }
     }
+}
+
+.iconPost {
+    font-size: 24px;
+    padding: 8px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.iconPost:hover {
+    font-size: 27px;
+    transition: 0.4s;
 }

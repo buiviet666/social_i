@@ -9,6 +9,9 @@ import { AntDesignOutlined } from '@ant-design/icons';
 import './index.scss';
 import { useUserAuth } from '../../context/UserAuthContext';
 import Footers from '../../components/Footers/Footers';
+import { useEffect, useState } from 'react';
+import { DocumentResponse } from '../Types';
+import { getPosts } from '../../repository/post.service';
 
 export interface HomeProps {
 }
@@ -16,6 +19,26 @@ export interface HomeProps {
 export default function Home() {
     // props: HomeProps
     const { user } = useUserAuth();
+    const [data, setData] = useState<DocumentResponse[]>([]);
+    const getAllPost = async () => {
+
+        const response: DocumentResponse[] = await getPosts() || [];
+        console.log("all post is: ", response);
+        setData(response);
+    };
+
+    useEffect(() => {
+        if (user != null) {
+            getAllPost();
+        }
+    }, []);
+
+    const renderPostCard = () => {
+        return data.map((item) => {
+            return <Post data={item} key={item.id} />
+        })
+    }
+
     return (
         <Layouts>
             <Content style={{ margin: '24px 16px 0', overflow: 'initial', width: 100, justifyContent: 'center', display: 'flex', flexDirection: 'row' }}>
@@ -24,7 +47,8 @@ export default function Home() {
                         <Rell />
                     </Header>
                     <Content style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <Post />
+                        {/* <Post /> */}
+                        {data ? renderPostCard() : <div>...nothing to show!!!</div>}
                     </Content>
                 </Layout>
 

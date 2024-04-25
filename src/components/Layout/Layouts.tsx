@@ -103,7 +103,8 @@ export default function Layouts({ children }: LayoutsProps) {
                             className='menuItemsDropdown'
                             menu={{ items }}
                             trigger={['click']}
-                            placement='top'>
+                            placement='top'
+                            overlayStyle={{ width: '200px', minWidth: 'unset' }}>
                             <Menu.Item
                                 onClick={(e) => e.domEvent.preventDefault()}
                                 className='items positionBottom'
