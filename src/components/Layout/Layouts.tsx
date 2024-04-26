@@ -2,16 +2,17 @@ import React, { useMemo, useState } from 'react';
 import { routes } from '../../Routes';
 import { Link, useNavigate } from 'react-router-dom';
 import Sider from 'antd/es/layout/Sider';
-import { Drawer, Dropdown, Layout, Menu, MenuProps, Modal } from 'antd';
+import { Button, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Space } from 'antd';
 import './index.scss';
-import { LogoutOutlined, MenuOutlined, SettingOutlined } from '@ant-design/icons';
+import { LogoutOutlined, MailOutlined, MenuOutlined, SettingOutlined } from '@ant-design/icons';
 import { useUserAuth } from '../../context/UserAuthContext';
+import SetupProfile from '../../pages/SetupProfile/SetupProfile';
 
 interface LayoutsProps {
     children: React.ReactNode;
 }
 
-interface MenuItem {
+interface MenuItemType {
     path?: string;
     element?: React.ReactElement;
     label?: string;
@@ -37,30 +38,91 @@ export default function Layouts({ children }: LayoutsProps) {
         isOpen: false,
     });
 
-    const MenuItems = useMemo(() => {
-        return routes[0].children?.filter((item) => item.isMenuItem).map((menuItem: MenuItem) => (
-            <Menu.Item
-                className='items'
-                key={menuItem.key}
-                icon={menuItem.icon}
-                onClick={() => {
-                    if (menuItem.path) {
-                        history(menuItem.path, { replace: true });
-                    } else if (menuItem.render) {
-                        if (menuItem.popUp) {
-                            setCreate({ element: menuItem.element || null, isOpen: true });
-                        } else {
-                            setDrawer({ element: menuItem.element || null, isOpen: true });
-                        }
+    // const MenuItems = useMemo(() => {
+    //     return routes[0].children?.filter((item) => item.isMenuItem).map((menuItem: MenuItem) => (
+    //         <Menu.Item
+    //             className='items'
+    //             key={menuItem.key}
+    //             icon={menuItem.icon}
+    //             onClick={() => {
+    //                 if (menuItem.path) {
+    //                     history(menuItem.path, { replace: true });
+    //                 } else if (menuItem.render) {
+    //                     if (menuItem.popUp) {
+    //                         setCreate({ element: menuItem.element || null, isOpen: true });
+    //                     } else {
+    //                         setDrawer({ element: menuItem.element || null, isOpen: true });
+    //                     }
+    //                 } else {
+    //                     setCreate({ element: null, isOpen: false });
+    //                     setDrawer({ element: null, isOpen: false });
+    //                 }
+    //             }}>
+    //             <span>{menuItem.label}</span>
+    //         </Menu.Item>
+    //     ));
+    // }, [history]);
+
+    // const items: MenuProps['items'] = [
+    //     {
+    //         label: <Link to="/setting">
+    //             <SettingOutlined />
+    //             <span style={{ paddingLeft: '7px' }}>Setting</span>
+    //         </Link>,
+    //         key: '0',
+    //     },
+    //     {
+    //         type: 'divider',
+    //     },
+    //     {
+    //         label: <Link to="/login" onClick={logOut}>
+    //             <LogoutOutlined />
+    //             <span style={{ paddingLeft: '7px' }}>Log out</span>
+    //         </Link>,
+    //         key: '2',
+    //     },
+    // ];
+
+    type MenuItem = Required<MenuProps>['items'][number];
+
+    function getItem(
+        label: React.ReactNode,
+        key?: React.Key | null,
+        icon?: React.ReactNode,
+        onClick?: React.MouseEventHandler,
+        children?: MenuItem[],
+    ): MenuItem {
+        return {
+            label,
+            key,
+            icon,
+            children,
+            onClick,
+        } as MenuItem;
+    }
+
+    const itemsMenu: MenuItem[] = (
+        (routes[0]?.children ?? []).filter((item) => item.isMenuItem).map((itemsMenu: MenuItemType) => getItem(
+            itemsMenu.label,
+            itemsMenu.key,
+            itemsMenu.icon,
+            () => {
+                if (itemsMenu.path) {
+                    history(itemsMenu.path, { replace: true });
+                } else if (itemsMenu.render) {
+                    if (itemsMenu.popUp) {
+                        setCreate({ element: itemsMenu.element || null, isOpen: true });
                     } else {
-                        setCreate({ element: null, isOpen: false });
-                        setDrawer({ element: null, isOpen: false });
+                        setDrawer({ element: itemsMenu.element || null, isOpen: true });
                     }
-                }}>
-                <span>{menuItem.label}</span>
-            </Menu.Item>
-        ));
-    }, [history]);
+                } else {
+                    setCreate({ element: null, isOpen: false });
+                    setDrawer({ element: null, isOpen: false });
+                }
+            }
+        ))
+        // , getItem('SETTING', '422', <SetupProfile />, () => { history('/setting', { replace: true }) })
+    );
 
     const items: MenuProps['items'] = [
         {
@@ -68,7 +130,7 @@ export default function Layouts({ children }: LayoutsProps) {
                 <SettingOutlined />
                 <span style={{ paddingLeft: '7px' }}>Setting</span>
             </Link>,
-            key: '0',
+            key: '10',
         },
         {
             type: 'divider',
@@ -78,9 +140,10 @@ export default function Layouts({ children }: LayoutsProps) {
                 <LogoutOutlined />
                 <span style={{ paddingLeft: '7px' }}>Log out</span>
             </Link>,
-            key: '2',
+            key: '12',
         },
-    ];
+    ]
+
 
     return (
         <>
@@ -94,11 +157,9 @@ export default function Layouts({ children }: LayoutsProps) {
                     </Link>
 
                     {/* Menu items */}
-                    <Menu mode='inline' className='menuItems'>
+                    {/* <Menu mode='inline' className='menuItems'>
                         {MenuItems}
 
-
-                        {/* Menu more item */}
                         <Dropdown
                             className='menuItemsDropdown'
                             menu={{ items }}
@@ -113,7 +174,22 @@ export default function Layouts({ children }: LayoutsProps) {
                                 <span>MORE</span>
                             </Menu.Item>
                         </Dropdown>
-                    </Menu>
+                    </Menu> */}
+                    <Menu
+                        mode='inline'
+                        className='menuItems'
+                        items={itemsMenu} />
+
+                    <Dropdown
+                        menu={{ items }}
+                        placement="topLeft"
+                        trigger={['click']}
+                        arrow>
+                        <Space>
+                            <MenuOutlined />
+                            <span>MORE</span>
+                        </Space>
+                    </Dropdown>
                 </Sider>
 
                 <Layout style={{ marginLeft: 336, backgroundColor: 'rgb(255, 255, 255)' }}>

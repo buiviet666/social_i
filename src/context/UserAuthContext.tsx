@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { auth } from '../firebaseConfig';
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User } from 'firebase/auth';
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile, User } from 'firebase/auth';
+import { ProfileInfo } from '../pages/Types';
 
 interface UserAuthContext {
     children: React.ReactNode;
@@ -11,6 +12,7 @@ type AuthContextData = {
     logIn: typeof logIn;
     signIn: typeof signIn;
     logOut: typeof logOut;
+    updateProfileInfo: typeof updateProfileInfo;
 };
 
 const logIn = (email: string, password: string) => {
@@ -25,12 +27,24 @@ const logOut = () => {
     signOut(auth);
 }
 
+const updateProfileInfo = (profileInfo: ProfileInfo) => {
+    console.log("The user profileInfo is : ", profileInfo);
+    return updateProfile(profileInfo.user!, {
+        displayName: profileInfo.displayName,
+        photoURL: profileInfo.photoURl,
+    });
+};
+
 export const UserAuthContext = createContext<AuthContextData>({
     user: null,
     logIn,
     signIn,
     logOut,
+    updateProfileInfo,
 });
+
+
+
 
 export const UserAuthProvider: React.FunctionComponent<UserAuthContext> = ({ children }) => {
 
@@ -55,6 +69,7 @@ export const UserAuthProvider: React.FunctionComponent<UserAuthContext> = ({ chi
         logIn,
         signIn,
         logOut,
+        updateProfileInfo,
     }
 
     return (

@@ -5,10 +5,11 @@ import { useEffect, useState } from 'react';
 import Layouts from '../../components/Layout/Layouts';
 import './index.scss'
 import Footers from '../../components/Footers/Footers';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { DocumentResponse, Post, ProfileResponse } from '../Types';
 import { getPostByUserId } from '../../repository/post.service';
+import { getUserProfile } from '../../repository/user.service';
 
 export interface ProfileProps {
 }
@@ -62,6 +63,7 @@ export default function Profile() {
 
     const { user } = useUserAuth();
     const [data, setData] = useState<DocumentResponse[]>([]);
+    const history = useNavigate();
 
     const initialUserProfile: ProfileResponse = {
         id: "",
@@ -112,6 +114,10 @@ export default function Profile() {
         })
     }
 
+    const editProfile = () => {
+        history("/setting", { state: userInfo });
+    }
+
     const items: TabsProps['items'] = [
         {
             key: '1',
@@ -135,7 +141,21 @@ export default function Profile() {
         }
     ];
 
-    console.log(data.length);
+    const getUserProfileInfo = async (userId: string) => {
+        const data: ProfileResponse = (await getUserProfile(userId)) || {};
+        if (data.displayName) {
+            setUserInfo(data);
+        }
+    };
+
+    useEffect(() => {
+        if (user != null) {
+            getAllPost(user.uid);
+            getUserProfileInfo(user.uid);
+        }
+    }, []);
+
+    console.log(userInfo);
 
 
     return (
@@ -161,7 +181,7 @@ export default function Profile() {
                                 </div>
                                 <div style={{ display: 'flex' }}>
                                     <div className='profile__fix profile_btn_fix'>
-                                        <Link to='/setting'>Edit profile</Link>
+                                        <span onClick={editProfile}>Edit profile</span>
                                     </div>
                                     <div className='profile__more'>
                                         <SettingOutlined />

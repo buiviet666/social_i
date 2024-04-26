@@ -3,7 +3,7 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import { useState } from 'react';
 import './index.scss';
 import { Link, useNavigate } from 'react-router-dom';
-import BackgroundLoginImg from '../../../public/login-bg.svg';
+import BackgroundLoginImg from '../../assets/login-bg.svg';
 import { UserLogIn } from '../Types';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { AnyObject } from 'antd/es/_util/type';
@@ -51,15 +51,15 @@ export default function Login() {
 
                             <Form.Item
                                 style={{ marginBottom: '30px' }}
-                                name="username"
-                                rules={[{ required: true, message: 'Please input your Username!' }]}>
+                                name="email"
+                                rules={[{ required: true, message: 'Please input your Email!' }]}>
                                 <Input
                                     onChange={(e) => { setUserLogInfo({ ...userLogInfo, email: e.target.value }) }}
                                     value={userLogInfo.email}
                                     size="large"
                                     style={{ fontSize: '17px' }}
                                     prefix={<UserOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
-                                    placeholder="Username" />
+                                    placeholder="Email" />
                             </Form.Item>
 
                             <Form.Item

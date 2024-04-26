@@ -7,7 +7,6 @@ export interface UserLogIn {
 }
 
 export interface UserSignIn {
-    displayName: string;
     email: string;
     password: string;
     confirmPassword: string;
@@ -45,6 +44,7 @@ export interface ProfileInfo {
     user?: User;
     displayName?: string;
     photoURl?: string;
+    userBio?: string;
 }
 
 export interface userProfile {

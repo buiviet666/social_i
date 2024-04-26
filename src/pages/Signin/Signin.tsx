@@ -2,16 +2,12 @@ import { EyeInvisibleOutlined, EyeTwoTone, LockOutlined, UserOutlined } from '@a
 import { Button, Checkbox, Form, Input } from 'antd';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import BackgroundImg from '../../../public/Devices-bro.svg';
+import BackgroundImg from '../../assets/Devices-bro.svg';
 import './index.scss';
 import { UserSignIn } from '../Types';
 import { useUserAuth } from '../../context/UserAuthContext';
 
-export interface SigninProps {
-}
-
 const initialValue: UserSignIn = {
-    displayName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -25,7 +21,6 @@ export default function Signin() {
 
     const handleSubmitSignin = async () => {
         try {
-            console.log("The user info is: ", userInfor);
             await signIn(userInfor.email, userInfor.password);
             navigate("/");
         } catch (error) {
@@ -50,19 +45,6 @@ export default function Signin() {
                             className="login-form "
                             initialValues={{ remember: true }}
                             style={{ width: '100%' }}>
-
-                            <Form.Item
-                                style={{ marginBottom: '30px' }}
-                                name="NameUser"
-                                rules={[{ required: true, message: 'Please input your Name!' }]}>
-                                <Input
-                                    onChange={(e) => { setUserInfo({ ...userInfor, displayName: e.target.value }) }}
-                                    value={userInfor.displayName}
-                                    size="large"
-                                    style={{ fontSize: '17px' }}
-                                    prefix={<UserOutlined className="site-form-item-icon" style={{ paddingRight: '10px' }} />}
-                                    placeholder="Name" />
-                            </Form.Item>
 
                             <Form.Item
                                 style={{ marginBottom: '30px' }}
