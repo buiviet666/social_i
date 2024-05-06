@@ -2,11 +2,11 @@
 
 import { Content, Footer } from "antd/es/layout/layout";
 import Layouts from "../../components/Layout/Layouts";
-import { Avatar, Button, Form, Input, Layout } from "antd";
+import { Avatar, Button, Form, Input, InputRef, Layout } from "antd";
 import Footers from "../../components/Footers/Footers";
 import './index.scss';
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FileEntry, ProfileInfo, userProfile } from "../Types";
 import FileUploader from "../../components/FileUploader/FileUploader";
 import { UserOutlined } from "@ant-design/icons";
@@ -24,6 +24,8 @@ export default function SetupProfile() {
     const history = useNavigate();
     const location = useLocation();
     const { id, userId, userBio, displayName, photoURL } = location.state;
+    const inputRef = useRef<InputRef>(null);
+
     const [data, setData] = useState<userProfile>({
         userId,
         displayName,
@@ -64,7 +66,15 @@ export default function SetupProfile() {
             console.log(error);
 
         }
-    }
+    };
+
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current!.focus({
+                cursor: 'end',
+            });
+        }
+    }, []);
 
     return (
         <Layouts>
@@ -84,7 +94,7 @@ export default function SetupProfile() {
 
                                     <div style={{ display: 'flex', flexDirection: 'column', padding: '0 16px' }}>
                                         <strong>{data.displayName}</strong>
-                                        <span>real name</span>
+                                        <span>{data.userBio}</span>
                                     </div>
                                 </div>
                                 <div>
@@ -105,6 +115,8 @@ export default function SetupProfile() {
                                 <Input
                                     onChange={(e) => { setData({ ...data, displayName: e.target.value }) }}
                                     value={data.displayName}
+
+                                    ref={inputRef}
                                     placeholder="input your name..." />
                             </Form.Item>
 
@@ -114,6 +126,7 @@ export default function SetupProfile() {
                                 <Input
                                     onChange={(e) => { setData({ ...data, userBio: e.target.value }) }}
                                     value={data.userBio}
+
                                     showCount
                                     maxLength={150}
                                     placeholder="input your bio..." />

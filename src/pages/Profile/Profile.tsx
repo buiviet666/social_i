@@ -200,7 +200,6 @@ export default function Profile() {
                                 </li>
                             </ul>
                             <div className='profile__info-display'>
-                                <span><strong>name real</strong></span>
                                 <div>{userInfo.userBio}</div>
                             </div>
                         </div>

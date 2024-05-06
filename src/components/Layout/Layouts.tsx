@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { routes } from '../../Routes';
 import { Link, useNavigate } from 'react-router-dom';
 import Sider from 'antd/es/layout/Sider';
-import { Button, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Space } from 'antd';
+import { Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Space } from 'antd';
 import './index.scss';
-import { LogoutOutlined, MailOutlined, MenuOutlined, SettingOutlined } from '@ant-design/icons';
+import { LogoutOutlined, MenuOutlined, SettingOutlined } from '@ant-design/icons';
 import { useUserAuth } from '../../context/UserAuthContext';
-import SetupProfile from '../../pages/SetupProfile/SetupProfile';
+import { ProfileResponse } from '../../pages/Types';
 
 interface LayoutsProps {
     children: React.ReactNode;
@@ -27,6 +27,14 @@ export default function Layouts({ children }: LayoutsProps) {
 
     const { logOut } = useUserAuth();
     const history = useNavigate();
+    const { user } = useUserAuth();
+
+    const userInfo: ProfileResponse = {
+        id: "",
+        userId: user?.uid,
+        displayName: user?.displayName ? user.displayName : "Name User...",
+        userBio: "input your bio...",
+    };
 
     const [create, setCreate] = useState<{ element: React.ReactElement | null; isOpen: boolean }>({
         element: null,
@@ -37,51 +45,6 @@ export default function Layouts({ children }: LayoutsProps) {
         element: null,
         isOpen: false,
     });
-
-    // const MenuItems = useMemo(() => {
-    //     return routes[0].children?.filter((item) => item.isMenuItem).map((menuItem: MenuItem) => (
-    //         <Menu.Item
-    //             className='items'
-    //             key={menuItem.key}
-    //             icon={menuItem.icon}
-    //             onClick={() => {
-    //                 if (menuItem.path) {
-    //                     history(menuItem.path, { replace: true });
-    //                 } else if (menuItem.render) {
-    //                     if (menuItem.popUp) {
-    //                         setCreate({ element: menuItem.element || null, isOpen: true });
-    //                     } else {
-    //                         setDrawer({ element: menuItem.element || null, isOpen: true });
-    //                     }
-    //                 } else {
-    //                     setCreate({ element: null, isOpen: false });
-    //                     setDrawer({ element: null, isOpen: false });
-    //                 }
-    //             }}>
-    //             <span>{menuItem.label}</span>
-    //         </Menu.Item>
-    //     ));
-    // }, [history]);
-
-    // const items: MenuProps['items'] = [
-    //     {
-    //         label: <Link to="/setting">
-    //             <SettingOutlined />
-    //             <span style={{ paddingLeft: '7px' }}>Setting</span>
-    //         </Link>,
-    //         key: '0',
-    //     },
-    //     {
-    //         type: 'divider',
-    //     },
-    //     {
-    //         label: <Link to="/login" onClick={logOut}>
-    //             <LogoutOutlined />
-    //             <span style={{ paddingLeft: '7px' }}>Log out</span>
-    //         </Link>,
-    //         key: '2',
-    //     },
-    // ];
 
     type MenuItem = Required<MenuProps>['items'][number];
 
@@ -112,38 +75,39 @@ export default function Layouts({ children }: LayoutsProps) {
                 } else if (itemsMenu.render) {
                     if (itemsMenu.popUp) {
                         setCreate({ element: itemsMenu.element || null, isOpen: true });
+                        console.log(create);
+                    } else if (create.isOpen === true || drawer.isOpen === true) {
+                        setCreate({ element: null, isOpen: false });
+                        setDrawer({ element: null, isOpen: false });
                     } else {
                         setDrawer({ element: itemsMenu.element || null, isOpen: true });
                     }
-                } else {
-                    setCreate({ element: null, isOpen: false });
-                    setDrawer({ element: null, isOpen: false });
                 }
             }
         ))
-        // , getItem('SETTING', '422', <SetupProfile />, () => { history('/setting', { replace: true }) })
     );
 
     const items: MenuProps['items'] = [
         {
-            label: <Link to="/setting">
-                <SettingOutlined />
-                <span style={{ paddingLeft: '7px' }}>Setting</span>
-            </Link>,
+            label:
+                <div onClick={() => history("/setting", { state: userInfo })}>
+                    <SettingOutlined />
+                    <span style={{ paddingLeft: '7px' }}>Setting</span>
+                </div>,
             key: '10',
         },
         {
             type: 'divider',
         },
         {
-            label: <Link to="/login" onClick={logOut}>
-                <LogoutOutlined />
-                <span style={{ paddingLeft: '7px' }}>Log out</span>
-            </Link>,
+            label:
+                <Link to="/login" onClick={logOut}>
+                    <LogoutOutlined />
+                    <span style={{ paddingLeft: '7px' }}>Log out</span>
+                </Link>,
             key: '12',
         },
-    ]
-
+    ];
 
     return (
         <>
@@ -151,30 +115,10 @@ export default function Layouts({ children }: LayoutsProps) {
                 <Sider
                     className='menu'
                     style={{ backgroundColor: '#FFFFFF', overflow: 'hidden', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: '99999' }}>
-                    {/* Logo */}
                     <Link to="/" className="menu__logo">
                         <span>GreenLand</span>
                     </Link>
 
-                    {/* Menu items */}
-                    {/* <Menu mode='inline' className='menuItems'>
-                        {MenuItems}
-
-                        <Dropdown
-                            className='menuItemsDropdown'
-                            menu={{ items }}
-                            trigger={['click']}
-                            placement='top'
-                            overlayStyle={{ width: '200px', minWidth: 'unset' }}>
-                            <Menu.Item
-                                onClick={(e) => e.domEvent.preventDefault()}
-                                className='items positionBottom'
-                                style={{ paddingLeft: '24px' }}
-                                icon={<MenuOutlined />}>
-                                <span>MORE</span>
-                            </Menu.Item>
-                        </Dropdown>
-                    </Menu> */}
                     <Menu
                         mode='inline'
                         className='menuItems'
@@ -184,8 +128,9 @@ export default function Layouts({ children }: LayoutsProps) {
                         menu={{ items }}
                         placement="topLeft"
                         trigger={['click']}
+                        overlayStyle={{ width: '200px', minWidth: 'unset' }}
                         arrow>
-                        <Space>
+                        <Space className='menuMoreDisplay'>
                             <MenuOutlined />
                             <span>MORE</span>
                         </Space>

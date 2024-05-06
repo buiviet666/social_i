@@ -28,7 +28,7 @@
     border: none !important;
     padding-top: 50px;
     position: relative;
-    height: 85vh;
+    height: 82vh;
 
     & .positionBottom {
         position: absolute !important;
@@ -98,4 +98,17 @@
     // width: 700px;
     // height: 753px;
     padding: 0 !important;
+}
+
+.menuMoreDisplay {
+    margin: 4px;
+    padding: 0 16px 0 24px;
+    display: flex;
+    flex-direction: row;
+    height: 40px;
+    cursor: pointer;
+}
+
+.menuMoreDisplay:hover {
+    background-color: rgb(240, 240, 240);
 }
