@@ -1,5 +1,5 @@
-import { Avatar, Button, Divider, Form, Input } from 'antd';
-import React, { useState } from 'react';
+import { Avatar, Button, Divider, Form, Input, InputRef } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import './index.scss';
 import FileUploader from '../../FileUploader/FileUploader';
 import { AntDesignOutlined, CloudUploadOutlined } from '@ant-design/icons';
@@ -17,34 +17,22 @@ export function Create() {
 
     const { user } = useUserAuth();
     const navigate = useNavigate();
+    const inputRef = useRef<InputRef>(null);
     const [photoFileEntry, setPhotoFileEntry] = useState<FileEntry>({ files: [] });
     const [post, setPost] = useState<Post>({
         date: new Date(),
         likes: 0,
         photos: [],
-        userId: null,
+        userId: "",
         caption: "",
         userlikes: [],
     });
 
-    // const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     console.log('Change:', e.target.value);
-    // };
-
-    const onFinish = (values: React.ReactElement) => {
-        console.log('Received values of form: ', values);
-    };
-
-
-    const submitPost = async (e: React.MouseEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        console.log("create post: ", post);
-
+    const submitPost = async () => {
         const photoMeta: PhotoMeta[] = photoFileEntry.files.map((file) => {
             return {
-                cdnUrl: file.cdnUrl,
-                uuid: file.uuid,
+                cdnUrl: file.cdnUrl!,
+                uuid: file.uuid!,
             }
         });
 
@@ -53,6 +41,9 @@ export function Create() {
                 ...post,
                 userId: user?.uid || null,
                 photos: photoMeta,
+                username: user.displayName!,
+                photoURL: user.photoURL!,
+                emailUser: user.email!,
             };
             console.log("finall: ", newPost);
             await createPost(newPost);
@@ -63,45 +54,63 @@ export function Create() {
         }
     }
 
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current!.focus({
+                cursor: 'end',
+            });
+        }
+    }, []);
+
+
+    console.log(photoFileEntry);
 
     return (
         <div className='create'>
             <Form
-                // onFinish={onFinish}
+                onFinish={submitPost}
                 initialValues={post}>
                 <div className='create__option'>
                     {/* <div>
-                    <Button type="link">Back</Button>
-                </div> */}
+                        <span style={{ padding: '4px 15px', color: 'red', cursor: 'pointer' }}>Close</span>
+                    </div> */}
                     <div className='create__title'>
                         <span><strong>Create New Post</strong></span>
                     </div>
                     <Form.Item
                         style={{ margin: 0 }}>
-                        <Button type="link" htmlType="submit" onClick={submitPost}>Post</Button>
+                        <Button type="link" htmlType="submit">Post</Button>
                     </Form.Item>
                 </div>
                 <Divider />
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <div className='create__content'>
-                        <Form.Item
-                            name="upload"
-                            style={{ marginBottom: '0' }}
-                        // rules={[{ required: true, message: 'Please input your photo' }]}
-                        >
-                            <FileUploader fileEntry={photoFileEntry} onChange={setPhotoFileEntry} />
-                        </Form.Item>
+                        {photoFileEntry.files?.length === 0 ?
+
+                            <div>hhhhhhh</div>
+                            : <Form.Item
+                                name="upload"
+                                style={{ marginBottom: '0' }}
+                            // rules={[{ required: true, message: 'Please input your photo' }]}
+                            >
+                                <FileUploader fileEntry={photoFileEntry} onChange={setPhotoFileEntry} />
+                            </Form.Item>
+                        }
+
+
+
                     </div>
                     <div className='create__description'>
                         <div style={{ margin: '16px' }}>
                             <Avatar icon={<AntDesignOutlined />} />
-                            <span style={{ marginLeft: '12px' }}><strong>Name</strong></span>
+                            <span style={{ marginLeft: '12px' }}><strong>{user?.displayName ? user.displayName : user?.email}</strong></span>
                         </div>
                         <div style={{ padding: '0 16px', border: 'unset' }}>
                             <Form.Item
                                 name="description"
                                 rules={[{ required: true, message: 'Please input your description' }]}>
                                 <Input.TextArea
+                                    ref={inputRef}
                                     onChange={(e) => { setPost({ ...post, caption: e.target.value }) }}
                                     value={post.caption}
                                     showCount

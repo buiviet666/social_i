@@ -13,31 +13,27 @@ import { useEffect, useState } from 'react';
 import { DocumentResponse } from '../Types';
 import { getPosts } from '../../repository/post.service';
 
-export interface HomeProps {
-}
-
 export default function Home() {
     // props: HomeProps
     const { user } = useUserAuth();
     const [data, setData] = useState<DocumentResponse[]>([]);
     const getAllPost = async () => {
-
         const response: DocumentResponse[] = await getPosts() || [];
         console.log("all post is: ", response);
         setData(response);
     };
-
-    useEffect(() => {
-        if (user != null) {
-            getAllPost();
-        }
-    }, []);
 
     const renderPostCard = () => {
         return data.map((item) => {
             return <Post data={item} key={item.id} />
         })
     }
+
+    useEffect(() => {
+        if (user != null) {
+            getAllPost();
+        }
+    }, [user]);
 
     return (
         <Layouts>
@@ -56,7 +52,7 @@ export default function Home() {
                     <List.Item.Meta
                         className='itemsProfile'
                         avatar={<Avatar icon={<AntDesignOutlined />} />}
-                        title={<a href='#'><strong>{user?.email}</strong></a>}
+                        title={<a href='#'><strong>{user?.displayName ? user.displayName : user?.email}</strong></a>}
                         description="nickname" />
                     <RecommendFriend />
                     <Footer style={{ background: 'none', color: '#C7C7C7' }}>

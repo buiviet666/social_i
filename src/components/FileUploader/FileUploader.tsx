@@ -44,7 +44,7 @@ export default function FileUploader({ fileEntry, onChange }: FileUploaderProps)
         const handleModalCloseEvent = () => {
             resetUploaderState();
 
-            onChange({ files: [...uploadFiles] });
+            onChange({ files: [...fileEntry.files, ...uploadFiles] })
 
             setUploadFiles([]);
         };

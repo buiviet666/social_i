@@ -17,49 +17,49 @@ export interface ProfileProps {
 export default function Profile() {
     // props: ProfileProps
 
-    type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+    // type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
 
-    const getBase64 = (img: FileType, callback: (url: string) => void) => {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => callback(reader.result as string));
-        reader.readAsDataURL(img);
-    };
+    // const getBase64 = (img: FileType, callback: (url: string) => void) => {
+    //     const reader = new FileReader();
+    //     reader.addEventListener('load', () => callback(reader.result as string));
+    //     reader.readAsDataURL(img);
+    // };
 
-    const beforeUpload = (file: FileType) => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-            message.error('You can only upload JPG/PNG file!');
-        }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-            message.error('Image must smaller than 2MB!');
-        }
-        return isJpgOrPng && isLt2M;
-    };
+    // const beforeUpload = (file: FileType) => {
+    //     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    //     if (!isJpgOrPng) {
+    //         message.error('You can only upload JPG/PNG file!');
+    //     }
+    //     const isLt2M = file.size / 1024 / 1024 < 2;
+    //     if (!isLt2M) {
+    //         message.error('Image must smaller than 2MB!');
+    //     }
+    //     return isJpgOrPng && isLt2M;
+    // };
 
-    const [loading, setLoading] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>();
+    // const [loading, setLoading] = useState(false);
+    // const [imageUrl, setImageUrl] = useState<string>();
 
-    const handleChange: UploadProps['onChange'] = (info) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-            return;
-        }
-        if (info.file.status === 'done') {
-            // Get this url from response in real world.
-            getBase64(info.file.originFileObj as FileType, (url) => {
-                setLoading(false);
-                setImageUrl(url);
-            });
-        }
-    };
+    // const handleChange: UploadProps['onChange'] = (info) => {
+    //     if (info.file.status === 'uploading') {
+    //         setLoading(true);
+    //         return;
+    //     }
+    //     if (info.file.status === 'done') {
+    //         // Get this url from response in real world.
+    //         getBase64(info.file.originFileObj as FileType, (url) => {
+    //             setLoading(false);
+    //             setImageUrl(url);
+    //         });
+    //     }
+    // };
 
-    const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type="button">
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </button>
-    );
+    // const uploadButton = (
+    //     <button style={{ border: 0, background: 'none' }} type="button">
+    //         {loading ? <LoadingOutlined /> : <PlusOutlined />}
+    //         <div style={{ marginTop: 8 }}>Upload</div>
+    //     </button>
+    // );
 
     const { user } = useUserAuth();
     const [data, setData] = useState<DocumentResponse[]>([]);
@@ -98,12 +98,6 @@ export default function Profile() {
         }
     };
 
-    useEffect(() => {
-        if (user != null) {
-            getAllPost(user.uid);
-        }
-    }, []);
-
     const renderPosts = () => {
         return data.map((item) => {
             return (
@@ -118,13 +112,33 @@ export default function Profile() {
         history("/setting", { state: userInfo });
     }
 
+
+
+    // const getUserProfileInfo = async (userId: string) => {
+    //     const data: ProfileResponse = (await getUserProfile(userId)) || {};
+    //     if (data.displayName) {
+    //         setUserInfo(data);
+    //     }
+    // };
+
+    useEffect(() => {
+        if (user != null) {
+            getAllPost(user.uid);
+            // getUserProfileInfo(user.uid);
+        }
+    }, []);
+
     const items: TabsProps['items'] = [
         {
             key: '1',
             label: 'Posts',
-            children: data ? <div className='tableContainerProfile'>{renderPosts()}</div> : <div>
-                <span>nothing to post</span>
-            </div>,
+            children: data
+                ? <div className='tableContainerProfile'>
+                    {renderPosts()}
+                </div>
+                : <div>
+                    <span>nothing to post</span>
+                </div>,
             icon: <AppstoreOutlined />,
         },
         {
@@ -140,23 +154,6 @@ export default function Profile() {
             icon: <HeartOutlined />,
         }
     ];
-
-    const getUserProfileInfo = async (userId: string) => {
-        const data: ProfileResponse = (await getUserProfile(userId)) || {};
-        if (data.displayName) {
-            setUserInfo(data);
-        }
-    };
-
-    useEffect(() => {
-        if (user != null) {
-            getAllPost(user.uid);
-            getUserProfileInfo(user.uid);
-        }
-    }, []);
-
-    console.log(userInfo);
-
 
     return (
         <Layouts>
@@ -207,7 +204,7 @@ export default function Profile() {
                     <Content>
                         <div>
                             <div>
-                                <Upload
+                                {/* <Upload
                                     name="avatar"
                                     listType="picture-circle"
                                     className="avatar-uploader"
@@ -216,7 +213,7 @@ export default function Profile() {
                                     beforeUpload={beforeUpload}
                                     onChange={handleChange}>
                                     {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                                </Upload>
+                                </Upload> */}
                             </div>
                             <div>
                                 <Tabs defaultActiveKey="1" items={items} centered />

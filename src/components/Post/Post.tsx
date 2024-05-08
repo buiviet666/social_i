@@ -13,9 +13,12 @@ interface PostProps {
 export default function Post({ data }: PostProps) {
 
     const { user } = useUserAuth();
-    const [likesInfo, setLikesInfo] = useState<{ likes?: number, isLike: boolean }>({
-        likes: data.likes,
-        isLike: data.userlikes.includes(user?.uid) ? true : false,
+    const [likesInfo, setLikesInfo] = useState<{
+        likes: number,
+        isLike: boolean
+    }>({
+        likes: data.likes!,
+        isLike: data.userlikes?.includes(user!.uid) ? true : false,
     });
 
     const uploadLike = async (isVal: boolean) => {
@@ -37,17 +40,15 @@ export default function Post({ data }: PostProps) {
         );
     };
 
-
-
     return (
         <div className='post__container'>
             <div className='post__main'>
                 <div className='post__main__spaceBetween'>
                     <div style={{ marginRight: '16px' }}><Avatar icon={<AntDesignOutlined />} /></div>
                     <div className='post__main__container'>
-                        <div><strong>name</strong></div>
+                        <div><strong>{data.username ? data.username : data.emailUser}</strong></div>
                         <span style={{ margin: '0 4px' }}>•</span>
-                        <div style={{ color: 'rgb(115, 115, 115)' }}>time</div>
+                        <div style={{ color: 'rgb(115, 115, 115)' }}>date</div>
                     </div>
                     <div>
                         <div><MoreOutlined /></div>
@@ -70,7 +71,7 @@ export default function Post({ data }: PostProps) {
                     </div>
                     <div style={{ marginTop: '8px', display: 'flex' }}>
                         <div style={{ marginRight: '4px' }}>
-                            <strong>Name</strong>
+                            <strong>{data.username ? data.username : data.emailUser}</strong>
                         </div>
                         <div>
                             {data.caption}

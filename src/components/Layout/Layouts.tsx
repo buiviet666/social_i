@@ -36,6 +36,9 @@ export default function Layouts({ children }: LayoutsProps) {
         userBio: "input your bio...",
     };
 
+    console.log("đổ dl bên layout: ", user);
+
+
     const [create, setCreate] = useState<{ element: React.ReactElement | null; isOpen: boolean }>({
         element: null,
         isOpen: false,
@@ -74,13 +77,17 @@ export default function Layouts({ children }: LayoutsProps) {
                     history(itemsMenu.path, { replace: true });
                 } else if (itemsMenu.render) {
                     if (itemsMenu.popUp) {
-                        setCreate({ element: itemsMenu.element || null, isOpen: true });
-                        console.log(create);
-                    } else if (create.isOpen === true || drawer.isOpen === true) {
-                        setCreate({ element: null, isOpen: false });
-                        setDrawer({ element: null, isOpen: false });
-                    } else {
+                        if (create.isOpen === false) {
+                            setCreate({ element: itemsMenu.element || null, isOpen: true });
+                            setDrawer({ element: null, isOpen: false });
+                        } else {
+                            setCreate({ element: null, isOpen: false });
+                        }
+                    } else if (drawer.isOpen === false) {
                         setDrawer({ element: itemsMenu.element || null, isOpen: true });
+                        setCreate({ element: null, isOpen: false });
+                    } else {
+                        setDrawer({ element: null, isOpen: false });
                     }
                 }
             }
@@ -122,6 +129,7 @@ export default function Layouts({ children }: LayoutsProps) {
                     <Menu
                         mode='inline'
                         className='menuItems'
+                        selectable={false}
                         items={itemsMenu} />
 
                     <Dropdown

@@ -7,17 +7,15 @@ import './index.scss';
 import { UserSignIn } from '../Types';
 import { useUserAuth } from '../../context/UserAuthContext';
 
-const initialValue: UserSignIn = {
-    email: "",
-    password: "",
-    confirmPassword: "",
-}
-
 export default function Signin() {
 
     const { signIn } = useUserAuth();
     const navigate = useNavigate();
-    const [userInfor, setUserInfo] = useState<UserSignIn>(initialValue);
+    const [userInfor, setUserInfo] = useState<UserSignIn>({
+        email: "",
+        password: "",
+        confirmPassword: "",
+    });
 
     const handleSubmitSignin = async () => {
         try {

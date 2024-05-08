@@ -13,7 +13,7 @@ export interface UserSignIn {
 }
 
 export interface FileEntry {
-    files: OutputFileEntry[];
+    files: OutputFileEntry<'success'>[];
 }
 
 export interface Post {
@@ -23,6 +23,9 @@ export interface Post {
     userId: string | null;
     caption: string;
     userlikes: [];
+    username?: string;
+    photoURL?: string;
+    emailUser?: string;
 }
 
 export interface PhotoMeta {
@@ -38,6 +41,8 @@ export interface DocumentResponse {
     userId?: string | null;
     caption?: string;
     userlikes?: [];
+    username?: string;
+    emailUser?: string;
 }
 
 export interface ProfileInfo {
