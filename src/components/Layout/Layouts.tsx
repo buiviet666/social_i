@@ -36,9 +36,6 @@ export default function Layouts({ children }: LayoutsProps) {
         userBio: "input your bio...",
     };
 
-    console.log("đổ dl bên layout: ", user);
-
-
     const [create, setCreate] = useState<{ element: React.ReactElement | null; isOpen: boolean }>({
         element: null,
         isOpen: false,
@@ -167,6 +164,9 @@ export default function Layouts({ children }: LayoutsProps) {
                 okButtonProps={{ style: { display: 'none' } }}
                 open={create.isOpen}
                 onCancel={() => { setCreate({ element: null, isOpen: false }) }}>
+                <div style={{ position: 'absolute', padding: '15px' }} onClick={() => { setCreate({ element: null, isOpen: false }) }}>
+                    <span style={{ padding: '4px 15px', color: 'red', cursor: 'pointer' }}>Close</span>
+                </div>
                 {create.element}
             </Modal>
         </>

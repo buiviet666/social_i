@@ -43,6 +43,7 @@ export interface DocumentResponse {
     userlikes?: [];
     username?: string;
     emailUser?: string;
+    photoURL?: string;
 }
 
 export interface ProfileInfo {

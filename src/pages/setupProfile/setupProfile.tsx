@@ -13,6 +13,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { createUserProfile, updateUserProfile } from "../../repository/user.service";
 import { useUserAuth } from "../../context/UserAuthContext";
 import { updateUserInfoOnPosts } from "../../repository/post.service";
+import blocksStyles from '@uploadcare/blocks/web/lr-file-uploader-regular.min.css?url';
 
 export interface SetupProfileProps {
 }
@@ -64,7 +65,6 @@ export default function SetupProfile() {
             history("/profile");
         } catch (error) {
             console.log(error);
-
         }
     };
 
@@ -74,7 +74,14 @@ export default function SetupProfile() {
                 cursor: 'end',
             });
         }
-    }, []);
+
+        if (fileEntry.files.length > 0) {
+            setData({ ...data, photoURL: fileEntry.files[0].cdnUrl || "" })
+        }
+    }, [fileEntry]);
+
+    console.log("test 6: ", fileEntry);
+
 
     return (
         <Layouts>
@@ -89,8 +96,13 @@ export default function SetupProfile() {
                                 <div style={{ display: 'flex' }}>
 
                                     {fileEntry.files.length > 0
-                                        ? (<Avatar icon={<img src={fileEntry.files[0].cdnUrl!} />} />)
-                                        : (<Avatar icon={<img src={data.photoURL ? data.photoURL : 'gi'} />} />)}
+                                        ? (
+                                            <Avatar icon={<img src={fileEntry.files[0].cdnUrl!} />} />
+                                        )
+                                        : (
+                                            <UserOutlined />
+                                            // <Avatar icon={<img src={data.photoURL ? data.photoURL : 'ddd'} />} />
+                                        )}
 
                                     <div style={{ display: 'flex', flexDirection: 'column', padding: '0 16px' }}>
                                         <strong>{data.displayName}</strong>
@@ -101,8 +113,22 @@ export default function SetupProfile() {
                                     <FileUploader
                                         fileEntry={fileEntry}
                                         onChange={setFileEntry}
+                                        preview={false}
                                     />
-                                    <a>Change photo</a>
+                                    <lr-config
+                                        ctx-name="my-uploader"
+                                        pubkey="71ae8ebb306291f26f62"
+                                        multiple={false}
+                                        confirmUpload={false}
+                                        removeCopyright={true}
+                                        imgOnly={true}>
+                                    </lr-config>
+
+                                    {/* khung chọn */}
+                                    <lr-file-uploader-regular
+                                        ctx-name="my-uploader"
+                                        css-src={blocksStyles}>
+                                    </lr-file-uploader-regular>
                                 </div>
                             </div>
                         </div>

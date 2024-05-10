@@ -13,13 +13,13 @@ import { useEffect, useState } from 'react';
 import { DocumentResponse } from '../Types';
 import { getPosts } from '../../repository/post.service';
 
+
 export default function Home() {
     // props: HomeProps
     const { user } = useUserAuth();
     const [data, setData] = useState<DocumentResponse[]>([]);
     const getAllPost = async () => {
         const response: DocumentResponse[] = await getPosts() || [];
-        console.log("all post is: ", response);
         setData(response);
     };
 
@@ -51,7 +51,11 @@ export default function Home() {
                 <Sider className='recommendFriend__main'>
                     <List.Item.Meta
                         className='itemsProfile'
-                        avatar={<Avatar icon={<AntDesignOutlined />} />}
+                        avatar={user?.photoURL ? (
+                            <Avatar icon={<img src={user.photoURL} />} />
+                        ) : (
+                            <Avatar icon={<AntDesignOutlined />} />
+                        )}
                         title={<a href='#'><strong>{user?.displayName ? user.displayName : user?.email}</strong></a>}
                         description="nickname" />
                     <RecommendFriend />

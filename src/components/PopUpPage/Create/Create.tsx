@@ -1,5 +1,5 @@
 import { Avatar, Button, Divider, Form, Input, InputRef } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './index.scss';
 import FileUploader from '../../FileUploader/FileUploader';
 import { AntDesignOutlined, CloudUploadOutlined } from '@ant-design/icons';
@@ -8,6 +8,7 @@ import blocksStyles from '@uploadcare/blocks/web/lr-file-uploader-regular.min.cs
 import { useUserAuth } from '../../../context/UserAuthContext';
 import { createPost } from '../../../repository/post.service';
 import { useNavigate } from 'react-router-dom';
+import updatePicture from '../../../assets/Picture-Polaroid-Landscape--Streamline-Ultimate.png';
 
 export interface CreateProps {
 }
@@ -45,10 +46,10 @@ export function Create() {
                 photoURL: user.photoURL!,
                 emailUser: user.email!,
             };
-            console.log("finall: ", newPost);
             await createPost(newPost);
 
             navigate("/");
+            window.location.reload();
         } else {
             navigate("/login");
         }
@@ -62,18 +63,13 @@ export function Create() {
         }
     }, []);
 
-
-    console.log(photoFileEntry);
-
     return (
         <div className='create'>
             <Form
                 onFinish={submitPost}
                 initialValues={post}>
                 <div className='create__option'>
-                    {/* <div>
-                        <span style={{ padding: '4px 15px', color: 'red', cursor: 'pointer' }}>Close</span>
-                    </div> */}
+
                     <div className='create__title'>
                         <span><strong>Create New Post</strong></span>
                     </div>
@@ -85,24 +81,25 @@ export function Create() {
                 <Divider />
                 <div style={{ display: 'flex', flexDirection: 'row' }}>
                     <div className='create__content'>
-                        {photoFileEntry.files?.length === 0 ?
 
-                            <div>hhhhhhh</div>
-                            : <Form.Item
-                                name="upload"
-                                style={{ marginBottom: '0' }}
-                            // rules={[{ required: true, message: 'Please input your photo' }]}
-                            >
-                                <FileUploader fileEntry={photoFileEntry} onChange={setPhotoFileEntry} />
-                            </Form.Item>
-                        }
-
-
+                        <FileUploader fileEntry={photoFileEntry} onChange={setPhotoFileEntry} preview={true} />
+                        {photoFileEntry.files.length > 0 ? (
+                            <FileUploader fileEntry={photoFileEntry} onChange={setPhotoFileEntry} preview={false} />
+                        ) : (
+                            <div className='create__content-container'>
+                                <img src={updatePicture} />
+                                <span>Your picture!</span>
+                            </div>
+                        )}
 
                     </div>
                     <div className='create__description'>
                         <div style={{ margin: '16px' }}>
-                            <Avatar icon={<AntDesignOutlined />} />
+                            {user?.photoURL ? (
+                                <Avatar icon={<img src={user.photoURL} />} />
+                            ) : (
+                                <Avatar icon={<AntDesignOutlined />} />
+                            )}
                             <span style={{ marginLeft: '12px' }}><strong>{user?.displayName ? user.displayName : user?.email}</strong></span>
                         </div>
                         <div style={{ padding: '0 16px', border: 'unset' }}>
@@ -142,7 +139,6 @@ export function Create() {
                                 </lr-file-uploader-regular>
 
                             </div>
-
                         </div>
                     </div>
                 </div>

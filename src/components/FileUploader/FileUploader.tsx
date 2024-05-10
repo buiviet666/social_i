@@ -2,15 +2,17 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import * as LR from '@uploadcare/blocks';
 import { FileEntry } from '../../pages/Types';
 import { OutputFileEntry } from "@uploadcare/blocks";
+import { Carousel } from 'antd';
 
 LR.registerBlocks(LR);
 
 interface FileUploaderProps {
     fileEntry: FileEntry;
     onChange: (fileEntry: FileEntry) => void;
+    preview: boolean;
 }
 
-export default function FileUploader({ fileEntry, onChange }: FileUploaderProps) {
+export default function FileUploader({ fileEntry, onChange, preview }: FileUploaderProps) {
     const [uploadFiles, setUploadFiles] = useState<OutputFileEntry<'success'>[]>([]);
     const ctxProviderRef = useRef<InstanceType<LR.UploadCtxProvider>>(null);
 
@@ -63,25 +65,31 @@ export default function FileUploader({ fileEntry, onChange }: FileUploaderProps)
                 ref={ctxProviderRef}>
             </lr-upload-ctx-provider>
 
-            <div>
-                {fileEntry.files.map((file) => (
-                    <div key={file.uuid}>
-                        <img
-                            key={file.uuid}
-                            src={`${file.cdnUrl}/-/format/webp/-/quality/smart/-/stretch/fill/`}
-                            width="100%" />
+            {preview ? (
+                <Carousel
+                    // arrows
+                    infinite={false}>
+                    {fileEntry.files.map((file) => (
+                        <div key={file.uuid}>
+                            <img
+                                key={file.uuid}
+                                src={`${file.cdnUrl}/-/format/webp/-/quality/smart/-/stretch/fill/`}
+                                width="100%" />
 
-                        <div className="cursor-pointer flex justify-center absolute bg-white border-2 border-slate-800  rounded-full w-7 h-7" style={{ top: '10px', right: '10px' }}>
-                            <button
-                                className="text-slate-800 text-center"
-                                type="button"
-                                onClick={() => handleRemoveClick(file.uuid)}>
-                                ×
-                            </button>
+                            <div className="cursor-pointer flex justify-center absolute bg-white border-2 border-slate-800  rounded-full w-7 h-7" style={{ top: '10px', right: '10px' }}>
+                                <button
+                                    className="text-slate-800 text-center"
+                                    type="button"
+                                    onClick={() => handleRemoveClick(file.uuid)}>
+                                    ×
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </Carousel>
+            ) : (
+                <></>
+            )}
         </>
     );
 }

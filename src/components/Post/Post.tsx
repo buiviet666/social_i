@@ -1,5 +1,5 @@
 import { AntDesignOutlined, CommentOutlined, FlagOutlined, HeartOutlined, HeartTwoTone, MoreOutlined, SendOutlined, SmileOutlined } from '@ant-design/icons';
-import { Avatar, Divider, Input, Tooltip } from 'antd';
+import { Avatar, Carousel, Divider, Input, Tooltip } from 'antd';
 import './index.scss'
 import { DocumentResponse } from '../../pages/Types';
 import { useUserAuth } from '../../context/UserAuthContext';
@@ -14,29 +14,29 @@ export default function Post({ data }: PostProps) {
 
     const { user } = useUserAuth();
     const [likesInfo, setLikesInfo] = useState<{
-        likes: number,
-        isLike: boolean
+        likes?: number,
+        isLike: boolean,
     }>({
-        likes: data.likes!,
+        likes: data.likes,
         isLike: data.userlikes?.includes(user!.uid) ? true : false,
     });
 
     const uploadLike = async (isVal: boolean) => {
         setLikesInfo({
-            likes: isVal ? likesInfo.likes + 1 : likesInfo.likes - 1,
+            likes: isVal ? likesInfo.likes! + 1 : likesInfo.likes! - 1,
             isLike: !likesInfo.isLike,
         });
 
         if (isVal) {
             data.userlikes?.push(user!.uid);
         } else {
-            data.userlikes?.splice(data.userlikes.indexOf(user!.uid), 1);
+            data.userlikes?.splice(data.userlikes?.indexOf(user!.uid), 1);
         }
 
         await uploadLikesOnPost(
             data.id!,
             data.userlikes!,
-            isVal ? likesInfo.likes + 1 : likesInfo.likes - 1,
+            isVal ? likesInfo.likes! + 1 : likesInfo.likes! - 1,
         );
     };
 
@@ -44,7 +44,13 @@ export default function Post({ data }: PostProps) {
         <div className='post__container'>
             <div className='post__main'>
                 <div className='post__main__spaceBetween'>
-                    <div style={{ marginRight: '16px' }}><Avatar icon={<AntDesignOutlined />} /></div>
+                    <div style={{ marginRight: '16px' }}>
+                        {data.photoURL ? (
+                            <Avatar icon={<img src={data.photoURL} />} />
+                        ) : (
+                            <Avatar icon={<AntDesignOutlined />} />
+                        )}
+                    </div>
                     <div className='post__main__container'>
                         <div><strong>{data.username ? data.username : data.emailUser}</strong></div>
                         <span style={{ margin: '0 4px' }}>•</span>
@@ -54,12 +60,26 @@ export default function Post({ data }: PostProps) {
                         <div><MoreOutlined /></div>
                     </div>
                 </div>
-                <img className='post__main__img' width={272} alt='img' src={data.photos ? data.photos[0].cdnUrl : ""} />
+
+                <Carousel
+                    // arrows
+                    infinite={false}>
+                    {data.photos?.map((valueImg) => (
+                        <div key={valueImg.uuid}>
+                            <img className='post__main__img' width={272} alt='img' src={valueImg ? valueImg.cdnUrl : ""} />
+                        </div>
+                    ))}
+                </Carousel>
+
                 <div className='post__main__description'>
                     <div className='post__main__description__container'>
                         <div style={{ display: 'flex', position: 'absolute' }}>
                             <>
-                                {likesInfo.isLike ? <HeartTwoTone twoToneColor="#da1540" className='iconPost' onClick={() => uploadLike(!likesInfo.isLike)} /> : <HeartOutlined className='iconPost' onClick={() => uploadLike(!likesInfo.isLike)} />}
+                                {likesInfo.isLike ? (
+                                    <HeartTwoTone twoToneColor="#da1540" className='iconPost' onClick={() => uploadLike(!likesInfo.isLike)} />
+                                ) : (
+                                    <HeartOutlined className='iconPost' onClick={() => uploadLike(!likesInfo.isLike)} />
+                                )}
                             </>
                             <CommentOutlined className='iconPost' />
                             <SendOutlined className='iconPost' />
