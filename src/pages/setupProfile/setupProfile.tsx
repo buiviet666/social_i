@@ -63,6 +63,7 @@ export default function SetupProfile() {
             updateUserInfoOnPosts(profileInfo);
 
             history("/profile");
+            window.location.reload();
         } catch (error) {
             console.log(error);
         }
@@ -80,7 +81,7 @@ export default function SetupProfile() {
         }
     }, [fileEntry]);
 
-    console.log("test 6: ", fileEntry);
+    console.log("test 6: ", data);
 
 
     return (
@@ -98,9 +99,13 @@ export default function SetupProfile() {
                                     {fileEntry.files.length > 0
                                         ? (
                                             <Avatar icon={<img src={fileEntry.files[0].cdnUrl!} />} />
-                                        )
-                                        : (
-                                            <UserOutlined />
+                                        ) : (
+                                            data.photoURL
+                                                ? (
+                                                    <Avatar icon={<img src={data.photoURL} />} />
+                                                ) : (
+                                                    <UserOutlined />
+                                                )
                                             // <Avatar icon={<img src={data.photoURL ? data.photoURL : 'ddd'} />} />
                                         )}
 

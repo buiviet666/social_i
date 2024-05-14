@@ -63,7 +63,22 @@ export interface userProfile {
 export interface ProfileResponse {
     id?: string;
     userId?: string;
-    displayName?: string;
+    displayName?: string | null;
     photoURL?: string;
     userBio?: string;
+}
+
+export interface CustomRouter {
+    key?: string;
+    path?: string;
+    element?: React.ReactElement;
+    children?: CustomRouter[];
+    label?: string;
+    isMenuItem?: boolean;
+    icon?: React.ReactElement;
+    render?: boolean;
+    auth?: boolean;
+    errorElement?: React.ReactElement;
+    popUp?: boolean;
+    imgAvantar?: boolean;
 }

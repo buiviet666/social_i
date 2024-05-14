@@ -1,10 +1,13 @@
-import { AntDesignOutlined, CommentOutlined, FlagOutlined, HeartOutlined, HeartTwoTone, MoreOutlined, SendOutlined, SmileOutlined } from '@ant-design/icons';
-import { Avatar, Carousel, Divider, Input, Tooltip } from 'antd';
+import { CommentOutlined, FlagOutlined, HeartOutlined, HeartTwoTone, MoreOutlined, SendOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Carousel, Divider, Dropdown, Input, MenuProps, Modal, Tooltip } from 'antd';
 import './index.scss'
 import { DocumentResponse } from '../../pages/Types';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { useState } from 'react';
 import { uploadLikesOnPost } from '../../repository/post.service';
+import PostEach from '../PopUpPage/PostEach/PostEach';
+import Likes from '../PopUpPage/Likes/Likes';
+import Share from '../PopUpPage/Share/Share';
 
 interface PostProps {
     data: DocumentResponse;
@@ -13,6 +16,9 @@ interface PostProps {
 export default function Post({ data }: PostProps) {
 
     const { user } = useUserAuth();
+    const [openCmt, setOpenCmt] = useState(false);
+    const [openLikes, setOpenLikes] = useState(false);
+    const [openShare, setOpenShare] = useState(false);
     const [likesInfo, setLikesInfo] = useState<{
         likes?: number,
         isLike: boolean,
@@ -40,6 +46,53 @@ export default function Post({ data }: PostProps) {
         );
     };
 
+    const items: MenuProps['items'] = data.userId === user!.uid ? (
+        [
+            {
+                label: <a href="https://www.antgroup.com">Edit</a>,
+                key: '0',
+            },
+            {
+                type: 'divider',
+            },
+            {
+                label: <a href="https://www.aliyun.com">Delete</a>,
+                key: '1',
+            },
+            {
+                type: 'divider',
+            },
+            {
+                label: <a href="https://www.aliyun.com">Cancel</a>,
+                key: '3',
+            },
+        ]
+    ) : (
+        [
+            {
+                label: <a href="https://www.antgroup.com">Unfollow</a>,
+                key: '0',
+            },
+            {
+                type: 'divider',
+            },
+            {
+                label: <a href="https://www.aliyun.com">Save</a>,
+                key: '1',
+            },
+            {
+                type: 'divider',
+            },
+            {
+                label: <a href="https://www.aliyun.com">Cancel</a>,
+                key: '3',
+            },
+        ]
+    );
+
+    console.log(data);
+
+
     return (
         <div className='post__container'>
             <div className='post__main'>
@@ -48,7 +101,7 @@ export default function Post({ data }: PostProps) {
                         {data.photoURL ? (
                             <Avatar icon={<img src={data.photoURL} />} />
                         ) : (
-                            <Avatar icon={<AntDesignOutlined />} />
+                            <Avatar icon={<UserOutlined />} />
                         )}
                     </div>
                     <div className='post__main__container'>
@@ -56,9 +109,14 @@ export default function Post({ data }: PostProps) {
                         <span style={{ margin: '0 4px' }}>•</span>
                         <div style={{ color: 'rgb(115, 115, 115)' }}>date</div>
                     </div>
-                    <div>
-                        <div><MoreOutlined /></div>
-                    </div>
+                    <Dropdown
+                        menu={{ items }}
+                        trigger={['click']}
+                        arrow={{ pointAtCenter: true }}>
+                        <div onClick={(e) => e.preventDefault()} style={{ cursor: 'pointer' }}>
+                            <MoreOutlined />
+                        </div>
+                    </Dropdown>
                 </div>
 
                 <Carousel
@@ -81,13 +139,50 @@ export default function Post({ data }: PostProps) {
                                     <HeartOutlined className='iconPost' onClick={() => uploadLike(!likesInfo.isLike)} />
                                 )}
                             </>
-                            <CommentOutlined className='iconPost' />
-                            <SendOutlined className='iconPost' />
+                            <>
+                                <CommentOutlined className='iconPost' onClick={() => setOpenCmt(true)} />
+                                <Modal
+                                    centered
+                                    open={openCmt}
+                                    onOk={() => setOpenCmt(false)}
+                                    onCancel={() => setOpenCmt(false)}
+                                    width={1350}
+                                    cancelButtonProps={{ style: { display: 'none' } }}
+                                    okButtonProps={{ style: { display: 'none' } }}
+                                    closeIcon={null}>
+                                    <PostEach />
+                                </Modal>
+                            </>
+                            <>
+                                <SendOutlined className='iconPost' onClick={() => setOpenShare(true)} />
+                                <Modal
+                                    centered
+                                    open={openShare}
+                                    onOk={() => setOpenShare(false)}
+                                    onCancel={() => setOpenShare(false)}
+                                    width={1350}
+                                    cancelButtonProps={{ style: { display: 'none' } }}
+                                    okButtonProps={{ style: { display: 'none' } }}
+                                    closeIcon={null}>
+                                    <Share />
+                                </Modal>
+                            </>
                         </div>
                         <div className='post__main__description__container__save'><FlagOutlined /></div>
                     </div>
                     <div>
-                        <strong>{likesInfo.likes} Likes</strong>
+                        <strong onClick={() => setOpenLikes(true)} style={{ cursor: 'pointer' }}>{likesInfo.likes} Likes</strong>
+                        <Modal
+                            title="Likes"
+                            centered
+                            open={openLikes}
+                            onOk={() => setOpenLikes(false)}
+                            onCancel={() => setOpenLikes(false)}
+                            width={1350}
+                            cancelButtonProps={{ style: { display: 'none' } }}
+                            okButtonProps={{ style: { display: 'none' } }}>
+                            <Likes />
+                        </Modal>
                     </div>
                     <div style={{ marginTop: '8px', display: 'flex' }}>
                         <div style={{ marginRight: '4px' }}>
@@ -97,7 +192,7 @@ export default function Post({ data }: PostProps) {
                             {data.caption}
                         </div>
                     </div>
-                    <div style={{ marginTop: '8px', color: 'rgba(0,0,0,.25)' }}>View comment...</div>
+                    <div style={{ marginTop: '8px', color: 'rgba(0,0,0,.25)', cursor: 'pointer' }} onClick={() => setOpenCmt(true)}>View comment...</div>
                     <div style={{ marginTop: '8px' }}>
                         <Input
                             placeholder="Input your comment !"

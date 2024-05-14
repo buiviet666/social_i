@@ -1,6 +1,7 @@
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { ProfileResponse, userProfile } from "../pages/Types";
 import { db } from "../firebaseConfig";
+import { UserProfile } from "firebase/auth";
 
 const COLLECTION_NAME = "user";
 
@@ -45,3 +46,28 @@ export const updateUserProfile = async (id: string, user: userProfile) => {
         ...user,
     });
 };
+
+export const getAllUser = async (userId: string) => {
+    try {
+
+        const querySnapShot = await getDocs(collection(db, COLLECTION_NAME));
+        const tempArr: ProfileResponse[] = [];
+        if (querySnapShot.size > 0) {
+            querySnapShot.forEach((doc) => {
+                const userData = doc.data() as UserProfile;
+                const responeObj: ProfileResponse = {
+                    id: doc.id,
+                    ...userData,
+                };
+
+                tempArr.push(responeObj);
+            });
+            return tempArr.filter((item) => item.userId != userId);
+        } else {
+            console.log("no res");
+        }
+
+    } catch (err) {
+        console.log(err);
+    }
+}

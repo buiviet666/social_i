@@ -32,7 +32,7 @@ const updateProfileInfo = (profileInfo: ProfileInfo) => {
     return updateProfile(profileInfo.user!, {
         displayName: profileInfo.displayName,
         photoURL: profileInfo.photoURl,
-        bio: profileInfo.userBio,
+        // bio: profileInfo.userBio,
     });
 };
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { routes } from '../../Routes';
 import { Link, useNavigate } from 'react-router-dom';
 import Sider from 'antd/es/layout/Sider';
-import { Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Space } from 'antd';
+import { Avatar, Drawer, Dropdown, Layout, Menu, MenuProps, Modal, Space } from 'antd';
 import './index.scss';
 import { LogoutOutlined, MenuOutlined, SettingOutlined } from '@ant-design/icons';
 import { useUserAuth } from '../../context/UserAuthContext';
@@ -21,6 +21,7 @@ interface MenuItemType {
     render?: boolean;
     popUp?: boolean;
     key?: string;
+    imgAvantar?: boolean;
 }
 
 export default function Layouts({ children }: LayoutsProps) {
@@ -68,7 +69,12 @@ export default function Layouts({ children }: LayoutsProps) {
         (routes[0]?.children ?? []).filter((item) => item.isMenuItem).map((itemsMenu: MenuItemType) => getItem(
             itemsMenu.label,
             itemsMenu.key,
-            itemsMenu.icon,
+            itemsMenu.imgAvantar ? (
+                <Avatar icon={user?.photoURL != null ? (
+                    <img src={user?.photoURL} />
+                ) : (
+                    itemsMenu.icon)} />
+            ) : (itemsMenu.icon),
             () => {
                 if (itemsMenu.path) {
                     history(itemsMenu.path, { replace: true });
@@ -118,7 +124,7 @@ export default function Layouts({ children }: LayoutsProps) {
             <Layout>
                 <Sider
                     className='menu'
-                    style={{ backgroundColor: '#FFFFFF', overflow: 'hidden', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: '99999' }}>
+                    style={{ backgroundColor: '#FFFFFF', overflow: 'hidden', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: '999' }}>
                     <Link to="/" className="menu__logo">
                         <span>GreenLand</span>
                     </Link>

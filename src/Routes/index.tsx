@@ -4,6 +4,7 @@ import { BellOutlined, HomeOutlined, PlusCircleOutlined, SearchOutlined, UserOut
 import { Create, Notify, Search } from "../components";
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoutes from "../components/ProtectedRoutes/ProtectedRoutes";
+import { CustomRouter } from "../pages/Types";
 
 const Home = React.lazy(() => import("../pages/Home/Home"));
 const Profile = React.lazy(() => import("../pages/Profile/Profile"));
@@ -12,19 +13,6 @@ const Login = React.lazy(() => import("../pages/Login/Login"));
 const Signin = React.lazy(() => import("../pages/Signin/Signin"));
 const SetupProfile = React.lazy(() => import("../pages/SetupProfile/SetupProfile"));
 
-interface CustomRouter {
-    key?: string;
-    path?: string;
-    element?: React.ReactElement;
-    children?: CustomRouter[];
-    label?: string;
-    isMenuItem?: boolean;
-    icon?: React.ReactElement;
-    render?: boolean;
-    auth?: boolean;
-    errorElement?: React.ReactElement;
-    popUp?: boolean;
-}
 
 export const routes: CustomRouter[] = [
     {
@@ -76,6 +64,7 @@ export const routes: CustomRouter[] = [
                 auth: true,
                 errorElement: <Page404 />,
                 key: '4',
+                imgAvantar: true,
             },
             {
                 path: ROUTES.PAGE404,

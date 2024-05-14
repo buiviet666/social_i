@@ -1,11 +1,11 @@
-import { AntDesignOutlined, AppstoreOutlined, FlagOutlined, HeartOutlined, LoadingOutlined, PlusOutlined, SettingOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, FlagOutlined, HeartOutlined, LoadingOutlined, PlusOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, GetProp, Layout, message, Tabs, TabsProps, Upload, UploadProps } from 'antd';
 import { Content, Footer, Header } from 'antd/es/layout/layout';
 import { useEffect, useState } from 'react';
 import Layouts from '../../components/Layout/Layouts';
 import './index.scss'
 import Footers from '../../components/Footers/Footers';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { DocumentResponse, Post, ProfileResponse } from '../Types';
 import { getPostByUserId } from '../../repository/post.service';
@@ -69,7 +69,7 @@ export default function Profile() {
     const userInfo: ProfileResponse = {
         id: "",
         userId: user?.uid,
-        displayName: user?.displayName ? user.displayName : "Guess...",
+        displayName: user?.displayName ? user?.displayName : user?.email,
         photoURL: user?.photoURL ? user.photoURL : "",
         userBio: "input your bio...",
     }
@@ -153,24 +153,28 @@ export default function Profile() {
                 <Layout className='profile__main__container'>
                     <Header className='profile__main__header'>
                         <div className='profile__main__header__avatar'>
-                            <div className='profile__main__header__avaContainer'>
-
-                                {userInfo.photoURL
-                                    ? <img src={userInfo.photoURL} />
-                                    : <Avatar
-                                        size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 100 }}
-                                        icon={<AntDesignOutlined />} />
-                                }
+                            <div>
+                                {userInfo.photoURL ? (
+                                    <Avatar
+                                        size={{ xs: 30, sm: 32, md: 40, lg: 64, xl: 80, xxl: 200 }}
+                                        icon={<img src={userInfo.photoURL} />} />
+                                ) : (
+                                    <Avatar
+                                        size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 200 }}
+                                        icon={<UserOutlined />} />
+                                )}
                             </div>
                         </div>
                         <div className='profile__main__header__title'>
                             <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', flexDirection: 'row', marginBottom: '20px' }}>
                                 <div className='profile__fix'>
-                                    <Link to='#'><strong>{userInfo.displayName}</strong></Link>
+                                    <span>
+                                        <strong>{userInfo.displayName}</strong>
+                                    </span>
                                 </div>
                                 <div style={{ display: 'flex' }}>
                                     <div className='profile__fix profile_btn_fix'>
-                                        <span onClick={editProfile}>Edit profile</span>
+                                        <span style={{ cursor: 'pointer' }} onClick={editProfile}>Edit profile</span>
                                     </div>
                                     <div className='profile__more'>
                                         <SettingOutlined />
