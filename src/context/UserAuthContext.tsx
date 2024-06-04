@@ -28,11 +28,11 @@ const logOut = () => {
 }
 
 const updateProfileInfo = (profileInfo: ProfileInfo) => {
-    console.log("The user profileInfo is : ", profileInfo);
+    // console.log("The user profileInfo is : ", profileInfo);
     return updateProfile(profileInfo.user!, {
         displayName: profileInfo.displayName,
         photoURL: profileInfo.photoURl,
-        // bio: profileInfo.userBio,
+        bio: profileInfo.bio,
     });
 };
 
@@ -45,17 +45,15 @@ export const UserAuthContext = createContext<AuthContextData>({
 });
 
 
-
-
 export const UserAuthProvider: React.FunctionComponent<UserAuthContext> = ({ children }) => {
 
     const [user, setUser] = useState<User | null>(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            console.log("I am in useEffect and user is : ", user);
+            // console.log("I am in useEffect and user is : ", user);
             if (user) {
-                console.log("The logged in user state is : ", user);
+                // console.log("The logged in user state is : ", user);
                 setUser(user);
             }
 

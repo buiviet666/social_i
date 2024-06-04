@@ -50,14 +50,14 @@ export interface ProfileInfo {
     user?: User;
     displayName?: string;
     photoURl?: string;
-    userBio?: string;
+    bio?: string;
 }
 
 export interface userProfile {
     userId?: string;
     displayName?: string;
     photoURL?: string;
-    userBio?: string;
+    bio?: string;
 }
 
 export interface ProfileResponse {
@@ -65,7 +65,7 @@ export interface ProfileResponse {
     userId?: string;
     displayName?: string | null;
     photoURL?: string;
-    userBio?: string;
+    bio?: string;
 }
 
 export interface CustomRouter {

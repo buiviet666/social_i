@@ -32,9 +32,10 @@ export default function Layouts({ children }: LayoutsProps) {
 
     const userInfo: ProfileResponse = {
         id: "",
+        photoURL: user?.photoURL ? user.photoURL : "",
         userId: user?.uid,
         displayName: user?.displayName ? user.displayName : "Name User...",
-        userBio: "input your bio...",
+        bio: user?.bio ? user?.bio : "Bio User...",
     };
 
     const [create, setCreate] = useState<{ element: React.ReactElement | null; isOpen: boolean }>({
@@ -70,14 +71,14 @@ export default function Layouts({ children }: LayoutsProps) {
             itemsMenu.label,
             itemsMenu.key,
             itemsMenu.imgAvantar ? (
-                <Avatar icon={user?.photoURL != null ? (
-                    <img src={user?.photoURL} />
+                <Avatar icon={userInfo.photoURL != null ? (
+                    <img src={userInfo.photoURL} />
                 ) : (
                     itemsMenu.icon)} />
-            ) : (itemsMenu.icon),
+            ) : (<Avatar icon={itemsMenu.icon} style={{ background: 'none' }} />),
             () => {
                 if (itemsMenu.path) {
-                    history(itemsMenu.path, { replace: true });
+                    history(itemsMenu.path, { state: { userId: userInfo.userId, displayName: userInfo.displayName, photoURL: userInfo.photoURL } });
                 } else if (itemsMenu.render) {
                     if (itemsMenu.popUp) {
                         if (create.isOpen === false) {
@@ -119,6 +120,8 @@ export default function Layouts({ children }: LayoutsProps) {
         },
     ];
 
+
+
     return (
         <>
             <Layout>
@@ -143,7 +146,7 @@ export default function Layouts({ children }: LayoutsProps) {
                         arrow>
                         <Space className='menuMoreDisplay'>
                             <MenuOutlined />
-                            <span>MORE</span>
+                            <span style={{ marginLeft: '50px' }}>MORE</span>
                         </Space>
                     </Dropdown>
                 </Sider>

@@ -11,7 +11,7 @@ const Profile = React.lazy(() => import("../pages/Profile/Profile"));
 const Page404 = React.lazy(() => import("../pages/Page404/Page404"));
 const Login = React.lazy(() => import("../pages/Login/Login"));
 const Signin = React.lazy(() => import("../pages/Signin/Signin"));
-const SetupProfile = React.lazy(() => import("../pages/SetupProfile/SetupProfile"));
+const SetupProfile = React.lazy(() => import("../pages/Profile/SetupProfile/SetupProfile"));
 
 
 export const routes: CustomRouter[] = [

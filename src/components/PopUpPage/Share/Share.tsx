@@ -1,9 +1,9 @@
-import * as React from 'react';
+
 
 export interface ShareProps {
 }
 
-export default function Share(props: ShareProps) {
+export default function Share() {
     return (
         <div>
             share

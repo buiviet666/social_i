@@ -10,15 +10,24 @@ import './index.scss';
 import { useUserAuth } from '../../context/UserAuthContext';
 import Footers from '../../components/Footers/Footers';
 import { useEffect, useState } from 'react';
-import { DocumentResponse } from '../Types';
+import { DocumentResponse, ProfileResponse } from '../Types';
 import { getPosts } from '../../repository/post.service';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Home() {
-    // props: HomeProps
     const { user } = useUserAuth();
+    const history = useNavigate();
+    const userInfo: ProfileResponse = {
+        id: "",
+        userId: user?.uid,
+        displayName: user?.displayName,
+        photoURL: user?.photoURL ? user.photoURL : "",
+        bio: user?.bio ? user.bio : "Bio User...",
+    }
+
     const [data, setData] = useState<DocumentResponse[]>([]);
+
     const getAllPost = async () => {
         const response: DocumentResponse[] = await getPosts() || [];
         setData(response);
@@ -26,6 +35,7 @@ export default function Home() {
 
     const renderPostCard = () => {
         return data.map((item) => {
+
             return <Post data={item} key={item.id} />
         })
     }
@@ -34,7 +44,8 @@ export default function Home() {
         if (user != null) {
             getAllPost();
         }
-    }, [user]);
+    }, []);
+
 
     return (
         <Layouts>
@@ -52,13 +63,13 @@ export default function Home() {
                 <Sider className='recommendFriend__main'>
                     <List.Item.Meta
                         className='itemsProfile'
-                        avatar={user?.photoURL ? (
-                            <Avatar icon={<img src={user.photoURL} />} />
+                        avatar={userInfo.photoURL ? (
+                            <Avatar icon={<img src={userInfo.photoURL} />} />
                         ) : (
                             <Avatar icon={<UserOutlined />} />
                         )}
-                        title={<Link to="/profile"><strong>{user?.displayName ? user.displayName : user?.email}</strong></Link>}
-                        description="nickname" />
+                        title={<a onClick={() => history("/profile", { state: userInfo })}><strong>{userInfo.displayName ? userInfo.displayName : user?.email}</strong></a>}
+                        description={userInfo.displayName ? user?.email : ""} />
                     <RecommendFriend />
                     <Footer style={{ background: 'none', color: '#C7C7C7' }}>
                         <Footers />

@@ -1,11 +1,11 @@
-import { AppstoreOutlined, FlagOutlined, HeartOutlined, LoadingOutlined, PlusOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, GetProp, Layout, message, Tabs, TabsProps, Upload, UploadProps } from 'antd';
+import { AppstoreOutlined, FlagOutlined, HeartOutlined, MoreOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Layout, Tabs, TabsProps } from 'antd';
 import { Content, Footer, Header } from 'antd/es/layout/layout';
 import { useEffect, useState } from 'react';
 import Layouts from '../../components/Layout/Layouts';
 import './index.scss'
 import Footers from '../../components/Footers/Footers';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { DocumentResponse, Post, ProfileResponse } from '../Types';
 import { getPostByUserId } from '../../repository/post.service';
@@ -16,62 +16,19 @@ export interface ProfileProps {
 export default function Profile() {
     // props: ProfileProps
 
-    type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-
-    const getBase64 = (img: FileType, callback: (url: string) => void) => {
-        const reader = new FileReader();
-        reader.addEventListener('load', () => callback(reader.result as string));
-        reader.readAsDataURL(img);
-    };
-
-    const beforeUpload = (file: FileType) => {
-        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-        if (!isJpgOrPng) {
-            message.error('You can only upload JPG/PNG file!');
-        }
-        const isLt2M = file.size / 1024 / 1024 < 2;
-        if (!isLt2M) {
-            message.error('Image must smaller than 2MB!');
-        }
-        return isJpgOrPng && isLt2M;
-    };
-
-    const [loading, setLoading] = useState(false);
-    const [imageUrl, setImageUrl] = useState<string>();
-
-    const handleChange: UploadProps['onChange'] = (info) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-            return;
-        }
-        if (info.file.status === 'done') {
-            // Get this url from response in real world.
-            getBase64(info.file.originFileObj as FileType, (url) => {
-                setLoading(false);
-                setImageUrl(url);
-            });
-        }
-    };
-
-    const uploadButton = (
-        <button style={{ border: 0, background: 'none' }} type="button">
-            {loading ? <LoadingOutlined /> : <PlusOutlined />}
-            <div style={{ marginTop: 8 }}>Upload</div>
-        </button>
-    );
-
-
-
     const { user } = useUserAuth();
     const [data, setData] = useState<DocumentResponse[]>([]);
     const history = useNavigate();
+    const location = useLocation();
+
+    const { userId, displayName, photoURL } = location.state;
 
     const userInfo: ProfileResponse = {
         id: "",
         userId: user?.uid,
         displayName: user?.displayName ? user?.displayName : user?.email,
         photoURL: user?.photoURL ? user.photoURL : "",
-        userBio: "input your bio...",
+        bio: user?.bio ? user.bio : "User bio...",
     }
 
     const getAllPost = async (id: string) => {
@@ -107,13 +64,6 @@ export default function Profile() {
         })
     }
 
-    console.log(data);
-
-
-    const editProfile = () => {
-        history("/setting", { state: userInfo });
-    }
-
     const items: TabsProps['items'] = [
         {
             key: '1',
@@ -147,6 +97,9 @@ export default function Profile() {
         }
     }, [user]);
 
+    console.log("user info: ", location);
+
+
     return (
         <Layouts>
             <Content className='profile__main'>
@@ -154,10 +107,10 @@ export default function Profile() {
                     <Header className='profile__main__header'>
                         <div className='profile__main__header__avatar'>
                             <div>
-                                {userInfo.photoURL ? (
+                                {(userInfo.photoURL && userInfo.userId === location.state) || photoURL ? (
                                     <Avatar
                                         size={{ xs: 30, sm: 32, md: 40, lg: 64, xl: 80, xxl: 200 }}
-                                        icon={<img src={userInfo.photoURL} />} />
+                                        icon={<img src={userInfo.userId === location.state ? userInfo.photoURL : photoURL} />} />
                                 ) : (
                                     <Avatar
                                         size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 200 }}
@@ -167,19 +120,44 @@ export default function Profile() {
                         </div>
                         <div className='profile__main__header__title'>
                             <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', flexDirection: 'row', marginBottom: '20px' }}>
-                                <div className='profile__fix'>
-                                    <span>
-                                        <strong>{userInfo.displayName}</strong>
-                                    </span>
-                                </div>
-                                <div style={{ display: 'flex' }}>
-                                    <div className='profile__fix profile_btn_fix'>
-                                        <span style={{ cursor: 'pointer' }} onClick={editProfile}>Edit profile</span>
-                                    </div>
-                                    <div className='profile__more'>
-                                        <SettingOutlined />
-                                    </div>
-                                </div>
+                                {userInfo.userId !== userId ? (
+                                    <>
+                                        <div className='profile__fix'>
+                                            <span>
+                                                <strong>{displayName}</strong>
+                                            </span>
+                                        </div>
+                                        <div style={{ display: 'flex' }}>
+                                            <div className='profile__fix profile_btn_fix'>
+                                                <span style={{ cursor: 'pointer' }}>Follow</span>
+                                            </div>
+                                            <div className='profile__fix profile_btn_fix'>
+                                                <span style={{ cursor: 'pointer' }}>Inbox</span>
+                                            </div>
+
+                                            <div className='profile__more'>
+                                                <MoreOutlined />
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div className='profile__fix'>
+                                            <span>
+                                                <strong>{userInfo.displayName}</strong>
+                                            </span>
+                                        </div>
+                                        <div style={{ display: 'flex' }}>
+                                            <div className='profile__fix profile_btn_fix'>
+                                                <span style={{ cursor: 'pointer' }} onClick={() => history("/setting", { state: userInfo })}>Edit profile</span>
+                                            </div>
+                                            <div className='profile__more'>
+                                                <SettingOutlined />
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+
                             </div>
                             <ul className='profile__info-data'>
                                 <li>
@@ -193,13 +171,13 @@ export default function Profile() {
                                 </li>
                             </ul>
                             <div className='profile__info-display'>
-                                <div>{userInfo.userBio}</div>
+                                <div>{userInfo.bio}</div>
                             </div>
                         </div>
                     </Header>
                     <Content>
                         <div>
-                            <div>
+                            {/* <div>
                                 <Upload
                                     name="avatar"
                                     listType="picture-circle"
@@ -210,7 +188,7 @@ export default function Profile() {
                                     onChange={handleChange}>
                                     {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
                                 </Upload>
-                            </div>
+                            </div> */}
                             <div>
                                 <Tabs defaultActiveKey="1" items={items} centered />
                             </div>
@@ -220,7 +198,7 @@ export default function Profile() {
                 <Footer className='profile__footer__main'>
                     <Footers />
                 </Footer>
-            </Content>
-        </Layouts>
+            </Content >
+        </Layouts >
     );
 }

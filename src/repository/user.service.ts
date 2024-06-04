@@ -13,6 +13,7 @@ export const createUserProfile = (user: userProfile) => {
     }
 };
 
+
 export const getUserProfile = async (userId: string) => {
     try {
         const q = query(
@@ -40,6 +41,7 @@ export const getUserProfile = async (userId: string) => {
     }
 };
 
+
 export const updateUserProfile = async (id: string, user: userProfile) => {
     const docRef = doc(db, COLLECTION_NAME, id);
     return updateDoc(docRef, {
@@ -47,26 +49,35 @@ export const updateUserProfile = async (id: string, user: userProfile) => {
     });
 };
 
-export const getAllUser = async (userId: string) => {
-    try {
 
-        const querySnapShot = await getDocs(collection(db, COLLECTION_NAME));
+export const getUserRecommend = async (userId: string) => {
+    try {
+        const queryToDb = await getDocs(collection(db, COLLECTION_NAME));
         const tempArr: ProfileResponse[] = [];
-        if (querySnapShot.size > 0) {
-            querySnapShot.forEach((doc) => {
-                const userData = doc.data() as UserProfile;
-                const responeObj: ProfileResponse = {
-                    id: doc.id,
+        if (queryToDb.size > 0) {
+            queryToDb.forEach((each) => {
+                const userData = each.data() as UserProfile;
+                const responseObj: ProfileResponse = {
+                    id: each.id,
                     ...userData,
                 };
-
-                tempArr.push(responeObj);
+                tempArr.push(responseObj);
             });
-            return tempArr.filter((item) => item.userId != userId);
-        } else {
-            console.log("no res");
-        }
+            const getDatas = tempArr.filter((item) => item.userId !== userId);
 
+            const seen = new Set();
+            const uniqueDatas = getDatas.filter((items) => {
+                if (seen.has(items.userId)) {
+                    return false;
+                } else {
+                    seen.add(items.userId);
+                    return true;
+                }
+            })
+            return uniqueDatas.slice(0, 5);
+        } else {
+            console.log("Nothing to get");
+        }
     } catch (err) {
         console.log(err);
     }

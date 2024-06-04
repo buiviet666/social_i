@@ -1,4 +1,4 @@
-import { Avatar, Button, Divider, Form, Input, InputRef } from 'antd';
+import { Avatar, Button, Divider, Form, Input, InputRef, message } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import './index.scss';
 import FileUploader from '../../FileUploader/FileUploader';
@@ -19,6 +19,7 @@ export function Create() {
     const { user } = useUserAuth();
     const navigate = useNavigate();
     const inputRef = useRef<InputRef>(null);
+    const [messageApi, contextHolder] = message.useMessage();
     const [photoFileEntry, setPhotoFileEntry] = useState<FileEntry>({ files: [] });
     const [post, setPost] = useState<Post>({
         date: new Date(),
@@ -28,6 +29,14 @@ export function Create() {
         caption: "",
         userlikes: [],
     });
+
+    const success = () => {
+        messageApi.open({
+            type: 'success',
+            content: 'Posted successfully!',
+            duration: 3,
+        });
+    }
 
     const submitPost = async () => {
         const photoMeta: PhotoMeta[] = photoFileEntry.files.map((file) => {
@@ -48,8 +57,14 @@ export function Create() {
             };
             await createPost(newPost);
 
+
+
+            if (window.location.pathname === "/") {
+                window.location.reload();
+                success();
+            }
             navigate("/");
-            window.location.reload();
+            success();
         } else {
             navigate("/login");
         }
@@ -63,8 +78,10 @@ export function Create() {
         }
     }, []);
 
+
     return (
         <div className='create'>
+            {contextHolder}
             <Form
                 onFinish={submitPost}
                 initialValues={post}>

@@ -8,6 +8,7 @@ import { uploadLikesOnPost } from '../../repository/post.service';
 import PostEach from '../PopUpPage/PostEach/PostEach';
 import Likes from '../PopUpPage/Likes/Likes';
 import Share from '../PopUpPage/Share/Share';
+import { useNavigate } from 'react-router-dom';
 
 interface PostProps {
     data: DocumentResponse;
@@ -16,15 +17,16 @@ interface PostProps {
 export default function Post({ data }: PostProps) {
 
     const { user } = useUserAuth();
+    const history = useNavigate();
     const [openCmt, setOpenCmt] = useState(false);
     const [openLikes, setOpenLikes] = useState(false);
     const [openShare, setOpenShare] = useState(false);
     const [likesInfo, setLikesInfo] = useState<{
         likes?: number,
-        isLike: boolean,
+        isLike?: boolean,
     }>({
         likes: data.likes,
-        isLike: data.userlikes?.includes(user!.uid) ? true : false,
+        isLike: data.userlikes?.some(number => number === user?.uid) ? true : false,
     });
 
     const uploadLike = async (isVal: boolean) => {
@@ -34,9 +36,9 @@ export default function Post({ data }: PostProps) {
         });
 
         if (isVal) {
-            data.userlikes?.push(user!.uid);
+            data.userlikes?.push(user?.uid as never);
         } else {
-            data.userlikes?.splice(data.userlikes?.indexOf(user!.uid), 1);
+            data.userlikes?.splice(data.userlikes?.indexOf(user?.uid as never), 1);
         }
 
         await uploadLikesOnPost(
@@ -90,8 +92,6 @@ export default function Post({ data }: PostProps) {
         ]
     );
 
-    console.log(data);
-
 
     return (
         <div className='post__container'>
@@ -105,7 +105,7 @@ export default function Post({ data }: PostProps) {
                         )}
                     </div>
                     <div className='post__main__container'>
-                        <div><strong>{data.username ? data.username : data.emailUser}</strong></div>
+                        <a onClick={() => history("/profile", { state: { userId: data.userId, displayName: data.username, photoURL: data.photoURL } })}><strong>{data.username ? data.username : data.emailUser}</strong></a>
                         <span style={{ margin: '0 4px' }}>•</span>
                         <div style={{ color: 'rgb(115, 115, 115)' }}>date</div>
                     </div>

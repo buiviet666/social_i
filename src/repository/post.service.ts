@@ -72,6 +72,6 @@ export const updateUserInfoOnPosts = async (profileInfo: ProfileInfo) => {
             });
         });
     } else {
-        console.log("The user doesn;t have anu post");
+        console.log("The user doesn't have anu post");
     }
 };

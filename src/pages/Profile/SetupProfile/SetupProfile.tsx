@@ -1,22 +1,20 @@
 // import React from 'react';
 
 import { Content, Footer } from "antd/es/layout/layout";
-import Layouts from "../../components/Layout/Layouts";
+import Layouts from "../../../components/Layout/Layouts";
 import { Avatar, Button, Form, Input, InputRef, Layout } from "antd";
-import Footers from "../../components/Footers/Footers";
+import Footers from "../../../components/Footers/Footers";
 import './index.scss';
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { FileEntry, ProfileInfo, userProfile } from "../Types";
-import FileUploader from "../../components/FileUploader/FileUploader";
+import { FileEntry, ProfileInfo, userProfile } from "../../Types";
+import FileUploader from "../../../components/FileUploader/FileUploader";
 import { UserOutlined } from "@ant-design/icons";
-import { createUserProfile, updateUserProfile } from "../../repository/user.service";
-import { useUserAuth } from "../../context/UserAuthContext";
-import { updateUserInfoOnPosts } from "../../repository/post.service";
+import { createUserProfile, updateUserProfile } from "../../../repository/user.service";
+import { useUserAuth } from "../../../context/UserAuthContext";
+import { updateUserInfoOnPosts } from "../../../repository/post.service";
 import blocksStyles from '@uploadcare/blocks/web/lr-file-uploader-regular.min.css?url';
 
-export interface SetupProfileProps {
-}
 
 export default function SetupProfile() {
     // props: setupProfileProps
@@ -24,45 +22,46 @@ export default function SetupProfile() {
     const { user, updateProfileInfo } = useUserAuth();
     const history = useNavigate();
     const location = useLocation();
-    const { id, userId, userBio, displayName, photoURL } = location.state;
+    const { id, userId, bio, displayName, photoURL } = location.state;
     const inputRef = useRef<InputRef>(null);
 
     const [data, setData] = useState<userProfile>({
         userId,
         displayName,
         photoURL,
-        userBio,
+        bio,
     });
 
     const [fileEntry, setFileEntry] = useState<FileEntry>({
         files: [],
-    })
+    });
 
     const submitInfo = async (e: React.MouseEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
             if (id) {
                 const response = await updateUserProfile(id, data);
-                console.log("THe update is: ", response);
+                console.log("The update is: ", response);
 
             } else {
                 const reponse = await createUserProfile(data);
                 console.log("The created is: ", reponse);
-
             }
 
             const profileInfo: ProfileInfo = {
                 user: user!,
                 displayName: data.displayName,
                 photoURl: data.photoURL,
-                userBio: data.userBio
+                bio: data.bio,
             };
 
             updateProfileInfo(profileInfo);
 
             updateUserInfoOnPosts(profileInfo);
+            console.log(profileInfo);
 
-            history("/profile");
+
+            history("/profile", { state: { userId: data.userId, displayName: data.displayName } });
             window.location.reload();
         } catch (error) {
             console.log(error);
@@ -81,7 +80,7 @@ export default function SetupProfile() {
         }
     }, [fileEntry]);
 
-    console.log("test 6: ", data);
+    console.log(location);
 
 
     return (
@@ -110,8 +109,8 @@ export default function SetupProfile() {
                                         )}
 
                                     <div style={{ display: 'flex', flexDirection: 'column', padding: '0 16px' }}>
-                                        <strong>{data.displayName}</strong>
-                                        <span>{data.userBio}</span>
+                                        <strong>{user?.displayName}</strong>
+                                        <span>{data.bio}</span>
                                     </div>
                                 </div>
                                 <div>
@@ -155,8 +154,8 @@ export default function SetupProfile() {
                                 label="Bio"
                                 name="Bio">
                                 <Input
-                                    onChange={(e) => { setData({ ...data, userBio: e.target.value }) }}
-                                    value={data.userBio}
+                                    onChange={(e) => { setData({ ...data, bio: e.target.value }) }}
+                                    value={data.bio}
 
                                     showCount
                                     maxLength={150}
