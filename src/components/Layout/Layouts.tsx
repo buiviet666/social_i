@@ -35,7 +35,7 @@ export default function Layouts({ children }: LayoutsProps) {
         photoURL: user?.photoURL ? user.photoURL : "",
         userId: user?.uid,
         displayName: user?.displayName ? user.displayName : "Name User...",
-        bio: user?.bio ? user?.bio : "Bio User...",
+        bio: "Bio User...",
     };
 
     const [create, setCreate] = useState<{ element: React.ReactElement | null; isOpen: boolean }>({

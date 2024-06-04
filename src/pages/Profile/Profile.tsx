@@ -28,7 +28,7 @@ export default function Profile() {
         userId: user?.uid,
         displayName: user?.displayName ? user?.displayName : user?.email,
         photoURL: user?.photoURL ? user.photoURL : "",
-        bio: user?.bio ? user.bio : "User bio...",
+        bio: "User bio...",
     }
 
     const getAllPost = async (id: string) => {
@@ -171,7 +171,7 @@ export default function Profile() {
                                 </li>
                             </ul>
                             <div className='profile__info-display'>
-                                <div>{userInfo.bio}</div>
+                                {/* <div>{userInfo.bio}</div> */}
                             </div>
                         </div>
                     </Header>

@@ -52,7 +52,6 @@ export default function SetupProfile() {
                 user: user!,
                 displayName: data.displayName,
                 photoURl: data.photoURL,
-                bio: data.bio,
             };
 
             updateProfileInfo(profileInfo);
@@ -110,7 +109,7 @@ export default function SetupProfile() {
 
                                     <div style={{ display: 'flex', flexDirection: 'column', padding: '0 16px' }}>
                                         <strong>{user?.displayName}</strong>
-                                        <span>{data.bio}</span>
+                                        {/* <span>{data.bio}</span> */}
                                     </div>
                                 </div>
                                 <div>
@@ -150,7 +149,7 @@ export default function SetupProfile() {
                                     placeholder="input your name..." />
                             </Form.Item>
 
-                            <Form.Item
+                            {/* <Form.Item
                                 label="Bio"
                                 name="Bio">
                                 <Input
@@ -160,7 +159,7 @@ export default function SetupProfile() {
                                     showCount
                                     maxLength={150}
                                     placeholder="input your bio..." />
-                            </Form.Item>
+                            </Form.Item> */}
 
                             <Form.Item
                                 style={{ float: 'right' }}>

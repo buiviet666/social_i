@@ -23,7 +23,7 @@ export default function Home() {
         userId: user?.uid,
         displayName: user?.displayName,
         photoURL: user?.photoURL ? user.photoURL : "",
-        bio: user?.bio ? user.bio : "Bio User...",
+        bio: "Bio User...",
     }
 
     const [data, setData] = useState<DocumentResponse[]>([]);
