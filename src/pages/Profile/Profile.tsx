@@ -8,28 +8,27 @@ import Footers from '../../components/Footers/Footers';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { DocumentResponse, Post, ProfileResponse } from '../Types';
-import { getPostByUserId } from '../../repository/post.service';
-
-export interface ProfileProps {
-}
+import { getPostByUserId, getPostLikes, getPostSave } from '../../repository/post.service';
+import { getUserProfile } from '../../repository/user.service';
 
 export default function Profile() {
-    // props: ProfileProps
 
     const { user } = useUserAuth();
     const [data, setData] = useState<DocumentResponse[]>([]);
+    const [dataPostLikes, setDataPostLikes] = useState<DocumentResponse[]>([]);
+    const [dataPostSave, setDataPostSave] = useState<DocumentResponse[]>([]);
     const history = useNavigate();
     const location = useLocation();
+    const { userId } = location.state;
 
-    const { userId, displayName, photoURL } = location.state;
-
-    const userInfo: ProfileResponse = {
+    const intialUserProfile: ProfileResponse = {
         id: "",
         userId: user?.uid,
         displayName: user?.displayName ? user?.displayName : user?.email,
         photoURL: user?.photoURL ? user.photoURL : "",
-        bio: "User bio...",
-    }
+        bio: "",
+    };
+    const [userInfo, setUserInfo] = useState<ProfileResponse>(intialUserProfile);
 
     const getAllPost = async (id: string) => {
         try {
@@ -42,9 +41,10 @@ export default function Profile() {
                         id: doc.id,
                         ...data
                     }
-                    console.log("The response ob is: ", responseObj);
                     tempArr.push(responseObj);
                 });
+                console.log(tempArr);
+
                 setData(tempArr);
             } else {
                 console.log("No doc");
@@ -54,11 +54,82 @@ export default function Profile() {
         }
     };
 
+    const getLikePosts = async (id: string) => {
+        try {
+            const querySnapShot = await getPostLikes(id);
+            const tempArr: DocumentResponse[] = [];
+            if (querySnapShot.size > 0) {
+                querySnapShot.forEach((doc) => {
+                    const data = doc.data() as Post;
+                    const responseObj: DocumentResponse = {
+                        id: doc.id,
+                        ...data
+                    }
+                    tempArr.push(responseObj);
+                });
+                setDataPostLikes(tempArr);
+            } else {
+                console.log("No doc");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getSavePosts = async (id: string) => {
+        try {
+            const querySnapShot = await getPostSave(id);
+            const tempArr: DocumentResponse[] = [];
+            if (querySnapShot.size > 0) {
+                querySnapShot.forEach((doc) => {
+                    const data = doc.data() as Post;
+                    const responseObj: DocumentResponse = {
+                        id: doc.id,
+                        ...data
+                    }
+                    tempArr.push(responseObj);
+                });
+                setDataPostSave(tempArr);
+            } else {
+                console.log("No doc");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getUserInfo = async (userId: string) => {
+        const dataProfile: ProfileResponse = (await getUserProfile(userId)) || {};
+        if (dataProfile.displayName) {
+            setUserInfo(dataProfile);
+        }
+    }
+
     const renderPosts = () => {
         return data.map((item) => {
             return (
                 <div key={item.photos![0].uuid} className='tablePhotoProfile'>
                     <img className='tableImgProfile' src={`${item.photos![0].cdnUrl}`} />
+                </div>
+            )
+        })
+    }
+
+    const renderPostsLike = () => {
+        return dataPostLikes.map((itemsPost) => {
+            return (
+                <div key={itemsPost.photos![0].uuid} className='tablePhotoProfile'>
+                    <img className='tableImgProfile' src={`${itemsPost.photos![0].cdnUrl}`} />
+                </div>
+            )
+        })
+    }
+
+    const renderPostsSave = () => {
+        return dataPostSave.map((itemsPost) => {
+            return (
+                <div key={itemsPost.photos![0].uuid} className='tablePhotoProfile'>
+                    <img className='tableImgProfile' src={`${itemsPost.photos![0].cdnUrl}`} />
                 </div>
             )
         })
@@ -80,24 +151,39 @@ export default function Profile() {
         {
             key: '2',
             label: 'Saves',
-            children: 'Content of Tab Pane 1',
+            children: dataPostSave
+                ? <div className='tableContainerProfile'>
+                    {renderPostsSave()}
+                </div>
+                : <div>
+                    <span>nothing to post</span>
+                </div>,
             icon: <FlagOutlined />,
         },
         {
             key: '3',
             label: 'likeds',
-            children: 'Content of Tab Pane 1',
+            children: dataPostLikes
+                ? <div className='tableContainerProfile'>
+                    {renderPostsLike()}
+                </div>
+                : <div>
+                    <span>nothing to post</span>
+                </div>,
             icon: <HeartOutlined />,
         }
     ];
 
     useEffect(() => {
-        if (user != null) {
-            getAllPost(user.uid);
+        if (userId != null) {
+            getAllPost(userId);
+            getLikePosts(userId);
+            getSavePosts(userId);
+            getUserInfo(userId);
         }
-    }, [user]);
+    }, [userId]);
 
-    console.log("user info: ", location);
+    console.log(dataPostLikes);
 
 
     return (
@@ -107,10 +193,10 @@ export default function Profile() {
                     <Header className='profile__main__header'>
                         <div className='profile__main__header__avatar'>
                             <div>
-                                {(userInfo.photoURL && userInfo.userId === location.state) || photoURL ? (
+                                {userInfo.photoURL ? (
                                     <Avatar
                                         size={{ xs: 30, sm: 32, md: 40, lg: 64, xl: 80, xxl: 200 }}
-                                        icon={<img src={userInfo.userId === location.state ? userInfo.photoURL : photoURL} />} />
+                                        icon={<img src={userInfo.photoURL} />} />
                                 ) : (
                                     <Avatar
                                         size={{ xs: 24, sm: 32, md: 40, lg: 64, xl: 80, xxl: 200 }}
@@ -120,44 +206,37 @@ export default function Profile() {
                         </div>
                         <div className='profile__main__header__title'>
                             <div style={{ minWidth: 0, display: 'flex', alignItems: 'center', flexDirection: 'row', marginBottom: '20px' }}>
-                                {userInfo.userId !== userId ? (
-                                    <>
-                                        <div className='profile__fix'>
-                                            <span>
-                                                <strong>{displayName}</strong>
-                                            </span>
-                                        </div>
-                                        <div style={{ display: 'flex' }}>
+                                <div className='profile__fix'>
+                                    <span>
+                                        <strong>{userInfo.displayName}</strong>
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex' }}>
+                                    {userInfo.userId === user?.uid ? (
+                                        <>
+                                            <div style={{ display: 'flex' }}>
+                                                <div className='profile__fix profile_btn_fix'>
+                                                    <span style={{ cursor: 'pointer' }} onClick={() => history("/setting", { state: userInfo })}>Edit profile</span>
+                                                </div>
+                                                <div className='profile__more'>
+                                                    <SettingOutlined />
+                                                </div>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <>
                                             <div className='profile__fix profile_btn_fix'>
                                                 <span style={{ cursor: 'pointer' }}>Follow</span>
                                             </div>
                                             <div className='profile__fix profile_btn_fix'>
                                                 <span style={{ cursor: 'pointer' }}>Inbox</span>
                                             </div>
-
                                             <div className='profile__more'>
                                                 <MoreOutlined />
                                             </div>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div className='profile__fix'>
-                                            <span>
-                                                <strong>{userInfo.displayName}</strong>
-                                            </span>
-                                        </div>
-                                        <div style={{ display: 'flex' }}>
-                                            <div className='profile__fix profile_btn_fix'>
-                                                <span style={{ cursor: 'pointer' }} onClick={() => history("/setting", { state: userInfo })}>Edit profile</span>
-                                            </div>
-                                            <div className='profile__more'>
-                                                <SettingOutlined />
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
-
+                                        </>
+                                    )}
+                                </div>
                             </div>
                             <ul className='profile__info-data'>
                                 <li>
@@ -171,24 +250,12 @@ export default function Profile() {
                                 </li>
                             </ul>
                             <div className='profile__info-display'>
-                                {/* <div>{userInfo.bio}</div> */}
+                                <div>{userInfo.bio}</div>
                             </div>
                         </div>
                     </Header>
                     <Content>
                         <div>
-                            {/* <div>
-                                <Upload
-                                    name="avatar"
-                                    listType="picture-circle"
-                                    className="avatar-uploader"
-                                    showUploadList={false}
-                                    action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
-                                    beforeUpload={beforeUpload}
-                                    onChange={handleChange}>
-                                    {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
-                                </Upload>
-                            </div> */}
                             <div>
                                 <Tabs defaultActiveKey="1" items={items} centered />
                             </div>

@@ -17,12 +17,10 @@ import blocksStyles from '@uploadcare/blocks/web/lr-file-uploader-regular.min.cs
 
 
 export default function SetupProfile() {
-    // props: setupProfileProps
-
     const { user, updateProfileInfo } = useUserAuth();
     const history = useNavigate();
     const location = useLocation();
-    const { id, userId, bio, displayName, photoURL } = location.state;
+    const { id, userId, displayName, photoURL, bio } = location.state;
     const inputRef = useRef<InputRef>(null);
 
     const [data, setData] = useState<userProfile>({
@@ -52,16 +50,13 @@ export default function SetupProfile() {
                 user: user!,
                 displayName: data.displayName,
                 photoURl: data.photoURL,
+                bio: data.bio,
             };
 
             updateProfileInfo(profileInfo);
-
             updateUserInfoOnPosts(profileInfo);
-            console.log(profileInfo);
 
-
-            history("/profile", { state: { userId: data.userId, displayName: data.displayName } });
-            window.location.reload();
+            history("/profile", { state: data });
         } catch (error) {
             console.log(error);
         }
@@ -78,8 +73,6 @@ export default function SetupProfile() {
             setData({ ...data, photoURL: fileEntry.files[0].cdnUrl || "" })
         }
     }, [fileEntry]);
-
-    console.log(location);
 
 
     return (
@@ -98,18 +91,15 @@ export default function SetupProfile() {
                                         ? (
                                             <Avatar icon={<img src={fileEntry.files[0].cdnUrl!} />} />
                                         ) : (
-                                            data.photoURL
-                                                ? (
-                                                    <Avatar icon={<img src={data.photoURL} />} />
-                                                ) : (
-                                                    <UserOutlined />
-                                                )
-                                            // <Avatar icon={<img src={data.photoURL ? data.photoURL : 'ddd'} />} />
-                                        )}
+                                            data.photoURL ? (
+                                                <Avatar icon={<img src={data.photoURL} />} />
+                                            ) : (
+                                                <UserOutlined />
+                                            ))}
 
                                     <div style={{ display: 'flex', flexDirection: 'column', padding: '0 16px' }}>
                                         <strong>{user?.displayName}</strong>
-                                        {/* <span>{data.bio}</span> */}
+                                        <span>{bio}</span>
                                     </div>
                                 </div>
                                 <div>
@@ -149,7 +139,7 @@ export default function SetupProfile() {
                                     placeholder="input your name..." />
                             </Form.Item>
 
-                            {/* <Form.Item
+                            <Form.Item
                                 label="Bio"
                                 name="Bio">
                                 <Input
@@ -159,7 +149,7 @@ export default function SetupProfile() {
                                     showCount
                                     maxLength={150}
                                     placeholder="input your bio..." />
-                            </Form.Item> */}
+                            </Form.Item>
 
                             <Form.Item
                                 style={{ float: 'right' }}>

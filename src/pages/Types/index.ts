@@ -26,6 +26,7 @@ export interface Post {
     username?: string;
     photoURL?: string;
     emailUser?: string;
+    usersave?: string[];
 }
 
 export interface PhotoMeta {
@@ -44,6 +45,7 @@ export interface DocumentResponse {
     username?: string;
     emailUser?: string;
     photoURL?: string;
+    usersave?: string[];
 }
 
 export interface ProfileInfo {

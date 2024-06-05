@@ -23,19 +23,19 @@ export default function Home() {
         userId: user?.uid,
         displayName: user?.displayName,
         photoURL: user?.photoURL ? user.photoURL : "",
-        bio: "Bio User...",
     }
 
     const [data, setData] = useState<DocumentResponse[]>([]);
 
     const getAllPost = async () => {
         const response: DocumentResponse[] = await getPosts() || [];
+        console.log(response);
+
         setData(response);
     };
 
     const renderPostCard = () => {
         return data.map((item) => {
-
             return <Post data={item} key={item.id} />
         })
     }
@@ -44,8 +44,9 @@ export default function Home() {
         if (user != null) {
             getAllPost();
         }
-    }, []);
+    }, [user]);
 
+    console.log("Thong tin ca nhan: ", user);
 
     return (
         <Layouts>

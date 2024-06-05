@@ -36,6 +36,16 @@ export const getPostByUserId = (id: string) => {
     return getDocs(q);
 };
 
+export const getPostLikes = (id: string) => {
+    const q = query(collection(db, COLLECTION_NAME), where("userlikes", "array-contains", id));
+    return getDocs(q);
+}
+
+export const getPostSave = (id: string) => {
+    const q = query(collection(db, COLLECTION_NAME), where("usersave", "array-contains", id));
+    return getDocs(q);
+}
+
 export const getPost = (id: string) => {
     const docRef = doc(db, COLLECTION_NAME, id);
     return getDoc(docRef);
@@ -57,6 +67,16 @@ export const uploadLikesOnPost = (
     });
 };
 
+export const uploadSaveOnPost = (
+    id: string,
+    usersave: string[],
+) => {
+    const docRef = doc(db, COLLECTION_NAME, id);
+    return updateDoc(docRef, {
+        usersave: usersave,
+    })
+}
+
 export const updateUserInfoOnPosts = async (profileInfo: ProfileInfo) => {
     const q = query(
         collection(db, COLLECTION_NAME),
@@ -72,6 +92,6 @@ export const updateUserInfoOnPosts = async (profileInfo: ProfileInfo) => {
             });
         });
     } else {
-        console.log("The user doesn't have anu post");
+        console.log("The user doesn't have any post");
     }
 };

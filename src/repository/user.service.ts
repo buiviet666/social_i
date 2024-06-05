@@ -31,6 +31,8 @@ export const getUserProfile = async (userId: string) => {
                     ...userData,
                 }
             });
+            console.log(tempData);
+
             return tempData;
         } else {
             console.log("no doc");

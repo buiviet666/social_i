@@ -4,7 +4,7 @@ import './index.scss'
 import { DocumentResponse } from '../../pages/Types';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { useState } from 'react';
-import { uploadLikesOnPost } from '../../repository/post.service';
+import { uploadLikesOnPost, uploadSaveOnPost } from '../../repository/post.service';
 import PostEach from '../PopUpPage/PostEach/PostEach';
 import Likes from '../PopUpPage/Likes/Likes';
 import Share from '../PopUpPage/Share/Share';
@@ -47,6 +47,30 @@ export default function Post({ data }: PostProps) {
             isVal ? likesInfo.likes! + 1 : likesInfo.likes! - 1,
         );
     };
+
+
+    const [saveInfo, setSaveInfo] = useState<{
+        isSave?: boolean,
+    }>({
+        isSave: data.usersave?.some(infoSave => infoSave === user?.uid) ? true : false,
+    })
+
+    const uploadSave = async (isVal: boolean) => {
+        setSaveInfo({
+            isSave: !saveInfo.isSave,
+        });
+
+        if (isVal) {
+            data.usersave?.push(user?.uid as never);
+        } else {
+            data.usersave?.splice(data.usersave.indexOf(user?.uid as never), 1);
+        }
+
+        await uploadSaveOnPost(
+            data.id!,
+            data.usersave!,
+        )
+    }
 
     const items: MenuProps['items'] = data.userId === user!.uid ? (
         [
@@ -92,6 +116,8 @@ export default function Post({ data }: PostProps) {
         ]
     );
 
+
+    console.log(data);
 
     return (
         <div className='post__container'>
@@ -168,7 +194,17 @@ export default function Post({ data }: PostProps) {
                                 </Modal>
                             </>
                         </div>
-                        <div className='post__main__description__container__save'><FlagOutlined /></div>
+                        <div className='post__main__description__container__save'>
+                            {/* <FlagOutlined /> */}
+                            {/* <FlagOutlined style={{ color: 'goldenrod' }} /> */}
+                            <>
+                                {saveInfo.isSave ? (
+                                    <FlagOutlined style={{ color: 'goldenrod' }} className='iconPost' onClick={() => uploadSave(!saveInfo.isSave)} />
+                                ) : (
+                                    <FlagOutlined className='iconPost' onClick={() => uploadSave(!saveInfo.isSave)} />
+                                )}
+                            </>
+                        </div>
                     </div>
                     <div>
                         <strong onClick={() => setOpenLikes(true)} style={{ cursor: 'pointer' }}>{likesInfo.likes} Likes</strong>

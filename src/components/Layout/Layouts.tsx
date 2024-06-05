@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { routes } from '../../Routes';
 import { Link, useNavigate } from 'react-router-dom';
 import Sider from 'antd/es/layout/Sider';
@@ -7,6 +7,7 @@ import './index.scss';
 import { LogoutOutlined, MenuOutlined, SettingOutlined } from '@ant-design/icons';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { ProfileResponse } from '../../pages/Types';
+import { getUserProfile } from '../../repository/user.service';
 
 interface LayoutsProps {
     children: React.ReactNode;
@@ -32,10 +33,9 @@ export default function Layouts({ children }: LayoutsProps) {
 
     const userInfo: ProfileResponse = {
         id: "",
-        photoURL: user?.photoURL ? user.photoURL : "",
         userId: user?.uid,
-        displayName: user?.displayName ? user.displayName : "Name User...",
-        bio: "Bio User...",
+        displayName: user?.displayName ? user?.displayName : user?.email,
+        photoURL: user?.photoURL ? user.photoURL : "",
     };
 
     const [create, setCreate] = useState<{ element: React.ReactElement | null; isOpen: boolean }>({
@@ -75,7 +75,8 @@ export default function Layouts({ children }: LayoutsProps) {
                     <img src={userInfo.photoURL} />
                 ) : (
                     itemsMenu.icon)} />
-            ) : (<Avatar icon={itemsMenu.icon} style={{ background: 'none' }} />),
+            ) : (
+                <Avatar icon={itemsMenu.icon} style={{ background: 'none' }} />),
             () => {
                 if (itemsMenu.path) {
                     history(itemsMenu.path, { state: { userId: userInfo.userId, displayName: userInfo.displayName, photoURL: userInfo.photoURL } });
@@ -98,10 +99,18 @@ export default function Layouts({ children }: LayoutsProps) {
         ))
     );
 
+    const getUserInfo = async (userId: string) => {
+        const dataProfile: ProfileResponse = (await getUserProfile(userId)) || {};
+        if (dataProfile.displayName) {
+            setUserInfoProfile(dataProfile);
+        }
+    }
+    const [userInfoProfile, setUserInfoProfile] = useState<ProfileResponse>(userInfo);
+
     const items: MenuProps['items'] = [
         {
             label:
-                <div onClick={() => history("/setting", { state: userInfo })}>
+                <div onClick={() => history("/setting", { state: userInfoProfile })}>
                     <SettingOutlined />
                     <span style={{ paddingLeft: '7px' }}>Setting</span>
                 </div>,
@@ -120,6 +129,11 @@ export default function Layouts({ children }: LayoutsProps) {
         },
     ];
 
+    useEffect(() => {
+        getUserInfo(user!.uid);
+    }, [user]);
+
+    console.log("inra thong tin ca nhan: ", userInfoProfile);
 
 
     return (
