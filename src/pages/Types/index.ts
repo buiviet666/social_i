@@ -53,6 +53,8 @@ export interface ProfileInfo {
     displayName?: string;
     photoURl?: string;
     bio?: string;
+    userFollowing?: string[];
+    userFollowers?: string[];
 }
 
 export interface userProfile {
@@ -60,6 +62,8 @@ export interface userProfile {
     displayName?: string;
     photoURL?: string;
     bio?: string;
+    userFollowing?: string[];
+    userFollowers?: string[];
 }
 
 export interface ProfileResponse {
@@ -68,6 +72,8 @@ export interface ProfileResponse {
     displayName?: string | null;
     photoURL?: string;
     bio?: string;
+    userFollowing?: string[];
+    userFollowers?: string[];
 }
 
 export interface CustomRouter {

@@ -133,8 +133,6 @@ export default function Layouts({ children }: LayoutsProps) {
         getUserInfo(user!.uid);
     }, [user]);
 
-    console.log("inra thong tin ca nhan: ", userInfoProfile);
-
 
     return (
         <>

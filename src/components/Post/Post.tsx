@@ -117,7 +117,8 @@ export default function Post({ data }: PostProps) {
     );
 
 
-    console.log(data);
+    // console.log("thong tin bai dang: ", data.userlikes);
+
 
     return (
         <div className='post__container'>
@@ -131,7 +132,7 @@ export default function Post({ data }: PostProps) {
                         )}
                     </div>
                     <div className='post__main__container'>
-                        <a onClick={() => history("/profile", { state: { userId: data.userId, displayName: data.username, photoURL: data.photoURL } })}><strong>{data.username ? data.username : data.emailUser}</strong></a>
+                        <a onClick={() => history("/profile", { state: { userId: data.userId } })}><strong>{data.username ? data.username : data.emailUser}</strong></a>
                         <span style={{ margin: '0 4px' }}>•</span>
                         <div style={{ color: 'rgb(115, 115, 115)' }}>date</div>
                     </div>
@@ -172,11 +173,13 @@ export default function Post({ data }: PostProps) {
                                     open={openCmt}
                                     onOk={() => setOpenCmt(false)}
                                     onCancel={() => setOpenCmt(false)}
-                                    width={1350}
+                                    footer={null}
+                                    width={'unset'}
+                                    style={{ maxHeight: 'calc(100vh - 40px)', maxWidth: 'calc(100% - 64px - 64px)' }}
                                     cancelButtonProps={{ style: { display: 'none' } }}
                                     okButtonProps={{ style: { display: 'none' } }}
                                     closeIcon={null}>
-                                    <PostEach />
+                                    <PostEach data={data} userId={user?.uid as string} />
                                 </Modal>
                             </>
                             <>
@@ -190,13 +193,11 @@ export default function Post({ data }: PostProps) {
                                     cancelButtonProps={{ style: { display: 'none' } }}
                                     okButtonProps={{ style: { display: 'none' } }}
                                     closeIcon={null}>
-                                    <Share />
+                                    <Share data={data} />
                                 </Modal>
                             </>
                         </div>
                         <div className='post__main__description__container__save'>
-                            {/* <FlagOutlined /> */}
-                            {/* <FlagOutlined style={{ color: 'goldenrod' }} /> */}
                             <>
                                 {saveInfo.isSave ? (
                                     <FlagOutlined style={{ color: 'goldenrod' }} className='iconPost' onClick={() => uploadSave(!saveInfo.isSave)} />
@@ -212,17 +213,17 @@ export default function Post({ data }: PostProps) {
                             title="Likes"
                             centered
                             open={openLikes}
+                            footer={null}
                             onOk={() => setOpenLikes(false)}
                             onCancel={() => setOpenLikes(false)}
-                            width={1350}
                             cancelButtonProps={{ style: { display: 'none' } }}
                             okButtonProps={{ style: { display: 'none' } }}>
-                            <Likes />
+                            <Likes data={data} />
                         </Modal>
                     </div>
                     <div style={{ marginTop: '8px', display: 'flex' }}>
                         <div style={{ marginRight: '4px' }}>
-                            <strong>{data.username ? data.username : data.emailUser}</strong>
+                            <a onClick={() => history("/profile", { state: { userId: data.userId } })}><strong>{data.username ? data.username : data.emailUser}</strong></a>
                         </div>
                         <div>
                             {data.caption}

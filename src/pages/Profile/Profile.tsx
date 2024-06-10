@@ -43,8 +43,6 @@ export default function Profile() {
                     }
                     tempArr.push(responseObj);
                 });
-                console.log(tempArr);
-
                 setData(tempArr);
             } else {
                 console.log("No doc");
@@ -183,7 +181,7 @@ export default function Profile() {
         }
     }, [userId]);
 
-    console.log(dataPostLikes);
+    console.log("in ra thong tin ca nhan: ", userInfo);
 
 
     return (

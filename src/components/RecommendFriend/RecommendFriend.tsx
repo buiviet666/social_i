@@ -13,6 +13,7 @@ export default function RecommendFriend() {
     const history = useNavigate();
     const [recommend, setRecommend] = useState<ProfileResponse[]>([]);
 
+
     const getListRecommend = async (userId: string) => {
         const response = (await getUserRecommend(userId)) || [];
         // console.log(response);
@@ -22,13 +23,21 @@ export default function RecommendFriend() {
 
     const data = recommend.map((val) => val);
 
+    // const [followers, setFollowers] = useState<{
+    //     follow: string,
+    //     isFollow: boolean,
+    // }>({
+    //     follow: 'following',
+    //     isFollow: ,
+    // });
+
     useEffect(() => {
         if (user != null) {
             getListRecommend(user?.uid);
         }
     }, [user]);
 
-    // console.log(recommend);
+    console.log(data);
 
 
     return (

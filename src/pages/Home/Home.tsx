@@ -29,8 +29,6 @@ export default function Home() {
 
     const getAllPost = async () => {
         const response: DocumentResponse[] = await getPosts() || [];
-        console.log(response);
-
         setData(response);
     };
 
@@ -47,6 +45,8 @@ export default function Home() {
     }, [user]);
 
     console.log("Thong tin ca nhan: ", user);
+
+
 
     return (
         <Layouts>

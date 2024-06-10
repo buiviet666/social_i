@@ -1,12 +1,17 @@
+import { DocumentResponse } from "../../../pages/Types";
 
 
 export interface ShareProps {
+    data: DocumentResponse;
 }
 
-export default function Share() {
+export default function Share({ data }: ShareProps) {
+
+    console.log(data);
+
+
+
     return (
-        <div>
-            share
-        </div>
+        <h1>gggggggggg</h1>
     );
 }
