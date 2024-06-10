@@ -28,6 +28,8 @@ export default function SetupProfile() {
         displayName,
         photoURL,
         bio,
+        userFollowing: [],
+        userFollowers: [],
     });
 
     const [fileEntry, setFileEntry] = useState<FileEntry>({

@@ -117,7 +117,7 @@ export default function Post({ data }: PostProps) {
     );
 
 
-    // console.log("thong tin bai dang: ", data.userlikes);
+    // console.log("thong tin bai dang: ", data);
 
 
     return (

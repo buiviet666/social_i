@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { DocumentResponse, ProfileResponse } from '../Types';
 import { getPosts } from '../../repository/post.service';
 import { useNavigate } from 'react-router-dom';
+import { getUsers } from '../../repository/user.service';
 
 
 export default function Home() {
@@ -26,11 +27,17 @@ export default function Home() {
     }
 
     const [data, setData] = useState<DocumentResponse[]>([]);
+    const [dataUserRecommend, setDataUserRecommend] = useState<ProfileResponse[]>([]);
 
     const getAllPost = async () => {
         const response: DocumentResponse[] = await getPosts() || [];
         setData(response);
     };
+
+    const getListUser = async () => {
+        const response = (await getUsers()) || [];
+        setDataUserRecommend(response);
+    }
 
     const renderPostCard = () => {
         return data.map((item) => {
@@ -41,10 +48,11 @@ export default function Home() {
     useEffect(() => {
         if (user != null) {
             getAllPost();
+            getListUser();
         }
     }, [user]);
 
-    console.log("Thong tin ca nhan: ", user);
+    console.log("Thong tin ca nhan: ", data);
 
 
 
@@ -71,7 +79,7 @@ export default function Home() {
                         )}
                         title={<a onClick={() => history("/profile", { state: userInfo })}><strong>{userInfo.displayName ? userInfo.displayName : user?.email}</strong></a>}
                         description={userInfo.displayName ? user?.email : ""} />
-                    <RecommendFriend />
+                    <RecommendFriend dataUser={dataUserRecommend} />
                     <Footer style={{ background: 'none', color: '#C7C7C7' }}>
                         <Footers />
                     </Footer>

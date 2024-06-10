@@ -7,7 +7,11 @@ import { getUserRecommend } from '../../repository/user.service';
 import { UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
-export default function RecommendFriend() {
+interface RecommendFriendProps {
+    dataUser: ProfileResponse[];
+}
+
+export default function RecommendFriend({ dataUser }: RecommendFriendProps) {
 
     const { user } = useUserAuth();
     const history = useNavigate();
@@ -37,7 +41,7 @@ export default function RecommendFriend() {
         }
     }, [user]);
 
-    console.log(data);
+    console.log("in ra recommend: ", dataUser);
 
 
     return (

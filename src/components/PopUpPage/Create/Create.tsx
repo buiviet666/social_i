@@ -58,8 +58,6 @@ export function Create() {
             };
             await createPost(newPost);
 
-
-
             if (window.location.pathname === "/") {
                 window.location.reload();
                 success();

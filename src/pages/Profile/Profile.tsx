@@ -27,6 +27,8 @@ export default function Profile() {
         displayName: user?.displayName ? user?.displayName : user?.email,
         photoURL: user?.photoURL ? user.photoURL : "",
         bio: "",
+        userFollowing: [],
+        userFollowers: [],
     };
     const [userInfo, setUserInfo] = useState<ProfileResponse>(intialUserProfile);
 

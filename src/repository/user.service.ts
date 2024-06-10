@@ -13,6 +13,28 @@ export const createUserProfile = (user: userProfile) => {
     }
 };
 
+export const getUsers = async () => {
+    try {
+        const q = query(collection(db, COLLECTION_NAME));
+        const querySnapshot = await getDocs(q);
+        const tempArr: ProfileResponse[] = [];
+        if (querySnapshot.size > 0) {
+            querySnapshot.forEach((doc) => {
+                const data = doc.data() as userProfile;
+                const responseObj: ProfileResponse = {
+                    id: doc.id,
+                    ...data,
+                };
+                tempArr.push(responseObj);
+            });
+            return tempArr;
+        } else {
+            console.log("no doc");
+        }
+    } catch (err) {
+        console.log(err);
+    }
+}
 
 export const getUserProfile = async (userId: string) => {
     try {
