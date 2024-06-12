@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { DocumentResponse, Post, ProfileResponse } from '../Types';
 import { getPostByUserId, getPostLikes, getPostSave } from '../../repository/post.service';
-import { getUserProfile } from '../../repository/user.service';
+import { getUserProfile, updateFollowingProfile, updateFollowProfile } from '../../repository/user.service';
 
 export default function Profile() {
 
@@ -23,14 +23,54 @@ export default function Profile() {
 
     const intialUserProfile: ProfileResponse = {
         id: "",
-        userId: user?.uid,
-        displayName: user?.displayName ? user?.displayName : user?.email,
-        photoURL: user?.photoURL ? user.photoURL : "",
+        userId: userId,
+        displayName: "",
+        photoURL: "",
         bio: "",
-        userFollowing: [],
-        userFollowers: [],
     };
+
+    const [userProfileAcc, setUserProfileAcc] = useState<ProfileResponse>()
     const [userInfo, setUserInfo] = useState<ProfileResponse>(intialUserProfile);
+    const [follow, setFollow] = useState<{
+        isFollow?: boolean,
+    }>({
+        isFollow: userInfo.userFollowers?.includes(user?.uid as never) ? true : false,
+    });
+
+    const updateFollow = async (isVal: boolean) => {
+        setFollow({
+            isFollow: !follow.isFollow,
+        });
+        console.log(isVal);
+
+        if (userInfo.userFollowers?.includes(user?.uid as never)) {
+            userInfo.userFollowers?.splice(userInfo.userFollowers?.indexOf(user?.uid as never), 1);
+            userProfileAcc?.userFollowing?.splice(userProfileAcc.userFollowing?.indexOf(userInfo.userId as never), 1)
+
+            await updateFollowProfile(
+                userInfo.id!,
+                userInfo.userFollowers!,
+            );
+
+            await updateFollowingProfile(
+                userProfileAcc!.id!,
+                userProfileAcc!.userFollowing!,
+            );
+        } else {
+            userInfo.userFollowers?.push(user?.uid as never);
+            userProfileAcc?.userFollowing?.push(userInfo.userId as never);
+
+            await updateFollowProfile(
+                userInfo.id!,
+                userInfo.userFollowers!,
+            );
+
+            await updateFollowingProfile(
+                userProfileAcc!.id!,
+                userProfileAcc!.userFollowing!,
+            );
+        }
+    };
 
     const getAllPost = async (id: string) => {
         try {
@@ -102,6 +142,13 @@ export default function Profile() {
         const dataProfile: ProfileResponse = (await getUserProfile(userId)) || {};
         if (dataProfile.displayName) {
             setUserInfo(dataProfile);
+        }
+    }
+
+    const getUserProfileAcc = async (userId: string) => {
+        const getData: ProfileResponse = (await getUserProfile(userId)) || {};
+        if (getData.displayName) {
+            setUserProfileAcc(getData);
         }
     }
 
@@ -180,10 +227,14 @@ export default function Profile() {
             getLikePosts(userId);
             getSavePosts(userId);
             getUserInfo(userId);
+            getUserProfileAcc(user?.uid as never);
         }
-    }, [userId]);
+    }, []);
 
-    console.log("in ra thong tin ca nhan: ", userInfo);
+    console.log("in ra thong tin acc chinh: ", userProfileAcc);
+    console.log("in ra thong tin: ", userInfo);
+    console.log("in ra id:", userId);
+
 
 
     return (
@@ -225,8 +276,10 @@ export default function Profile() {
                                         </>
                                     ) : (
                                         <>
-                                            <div className='profile__fix profile_btn_fix'>
-                                                <span style={{ cursor: 'pointer' }}>Follow</span>
+                                            <div className='profile__fix profile_btn_fix' onClick={() => updateFollow(!follow.isFollow)}>
+                                                <span style={{ cursor: 'pointer' }}>
+                                                    {userInfo.userFollowers?.includes(userProfileAcc?.userId as never) ? 'unfollow' : 'follow'}
+                                                </span>
                                             </div>
                                             <div className='profile__fix profile_btn_fix'>
                                                 <span style={{ cursor: 'pointer' }}>Inbox</span>
@@ -239,15 +292,31 @@ export default function Profile() {
                                 </div>
                             </div>
                             <ul className='profile__info-data'>
-                                <li>
-                                    <span><strong>{data.length} </strong>Post</span>
-                                </li>
-                                <li>
-                                    <span><strong>0 </strong>followers</span>
-                                </li>
-                                <li>
-                                    <span><strong>0</strong> following</span>
-                                </li>
+                                {userProfileAcc?.userId === userInfo.userId ? (
+                                    <>
+                                        <li>
+                                            <span><strong>{data.length} </strong>Post</span>
+                                        </li>
+                                        <li>
+                                            <span><strong>{userProfileAcc?.userFollowers?.length} </strong>followers</span>
+                                        </li>
+                                        <li>
+                                            <span><strong>{userProfileAcc?.userFollowing?.length}</strong> following</span>
+                                        </li>
+                                    </>
+                                ) : (
+                                    <>
+                                        <li>
+                                            <span><strong>{data.length} </strong>Post</span>
+                                        </li>
+                                        <li>
+                                            <span><strong>{userInfo.userFollowers?.length} </strong>followers</span>
+                                        </li>
+                                        <li>
+                                            <span><strong>{userInfo.userFollowing?.length}</strong> following</span>
+                                        </li>
+                                    </>
+                                )}
                             </ul>
                             <div className='profile__info-display'>
                                 <div>{userInfo.bio}</div>

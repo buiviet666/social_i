@@ -13,30 +13,31 @@ import { useEffect, useState } from 'react';
 import { DocumentResponse, ProfileResponse } from '../Types';
 import { getPosts } from '../../repository/post.service';
 import { useNavigate } from 'react-router-dom';
-import { getUsers } from '../../repository/user.service';
+import { getUserProfile } from '../../repository/user.service';
 
 
 export default function Home() {
     const { user } = useUserAuth();
     const history = useNavigate();
-    const userInfo: ProfileResponse = {
+    const [userInfo, setUserInfo] = useState<ProfileResponse>({
         id: "",
         userId: user?.uid,
         displayName: user?.displayName,
-        photoURL: user?.photoURL ? user.photoURL : "",
-    }
+        photoURL: "",
+    })
 
     const [data, setData] = useState<DocumentResponse[]>([]);
-    const [dataUserRecommend, setDataUserRecommend] = useState<ProfileResponse[]>([]);
 
     const getAllPost = async () => {
         const response: DocumentResponse[] = await getPosts() || [];
         setData(response);
     };
 
-    const getListUser = async () => {
-        const response = (await getUsers()) || [];
-        setDataUserRecommend(response);
+    const getUserProfileAcc = async (userId: string) => {
+        const getData: ProfileResponse = (await getUserProfile(userId)) || {};
+        if (getData.displayName) {
+            setUserInfo(getData);
+        }
     }
 
     const renderPostCard = () => {
@@ -48,12 +49,9 @@ export default function Home() {
     useEffect(() => {
         if (user != null) {
             getAllPost();
-            getListUser();
+            getUserProfileAcc(user.uid);
         }
     }, [user]);
-
-    console.log("Thong tin ca nhan: ", data);
-
 
 
     return (
@@ -77,9 +75,9 @@ export default function Home() {
                         ) : (
                             <Avatar icon={<UserOutlined />} />
                         )}
-                        title={<a onClick={() => history("/profile", { state: userInfo })}><strong>{userInfo.displayName ? userInfo.displayName : user?.email}</strong></a>}
+                        title={<a onClick={() => history("/profile", { state: { userId: userInfo.userId } })}><strong>{userInfo.displayName ? userInfo.displayName : user?.email}</strong></a>}
                         description={userInfo.displayName ? user?.email : ""} />
-                    <RecommendFriend dataUser={dataUserRecommend} />
+                    <RecommendFriend dataAcc={userInfo} />
                     <Footer style={{ background: 'none', color: '#C7C7C7' }}>
                         <Footers />
                     </Footer>

@@ -155,7 +155,7 @@ export default function PostEach({ data, userId }: PostEachProps) {
         <div className="postEach__main">
             <div className="postEach__main__img">
                 <Carousel
-                    arrows
+                    // arrows
                     infinite={false}>
                     {data.photos?.map((items) => (
                         <div key={items.uuid}>

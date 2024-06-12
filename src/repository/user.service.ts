@@ -72,6 +72,59 @@ export const updateUserProfile = async (id: string, user: userProfile) => {
 };
 
 
+// export const getUserRecommend = async (userId: string) => {
+//     try {
+//         const queryToDb = await getDocs(collection(db, COLLECTION_NAME));
+//         const tempArr: ProfileResponse[] = [];
+//         if (queryToDb.size > 0) {
+//             queryToDb.forEach((each) => {
+//                 const userData = each.data() as UserProfile;
+//                 const responseObj: ProfileResponse = {
+//                     id: each.id,
+//                     ...userData,
+//                 };
+//                 tempArr.push(responseObj);
+//             });
+//             const getDatas = tempArr.filter((item) => item.userId !== userId);
+
+//             const seen = new Set();
+//             const uniqueDatas = getDatas.filter((items) => {
+//                 if (seen.has(items.userId)) {
+//                     return false;
+//                 } else {
+//                     seen.add(items.userId);
+//                     return true;
+//                 }
+//             })
+//             return uniqueDatas.slice(0, 5);
+//         } else {
+//             console.log("Nothing to get");
+//         }
+//     } catch (err) {
+//         console.log(err);
+//     }
+// }
+
+export const updateFollowProfile = (
+    id: string,
+    userFollowers: string[],
+) => {
+    const docRef = doc(db, COLLECTION_NAME, id);
+    return updateDoc(docRef, {
+        userFollowers: userFollowers,
+    })
+}
+
+export const updateFollowingProfile = (
+    id: string,
+    userFollowing: string[],
+) => {
+    const docRef = doc(db, COLLECTION_NAME, id);
+    return updateDoc(docRef, {
+        userFollowing: userFollowing,
+    })
+}
+
 export const getUserRecommend = async (userId: string) => {
     try {
         const queryToDb = await getDocs(collection(db, COLLECTION_NAME));
@@ -85,10 +138,12 @@ export const getUserRecommend = async (userId: string) => {
                 };
                 tempArr.push(responseObj);
             });
+
             const getDatas = tempArr.filter((item) => item.userId !== userId);
+            const getDataNoFollow = getDatas.filter((val) => !val.userFollowers?.includes(userId));
 
             const seen = new Set();
-            const uniqueDatas = getDatas.filter((items) => {
+            const uniqueDatas = getDataNoFollow.filter((items) => {
                 if (seen.has(items.userId)) {
                     return false;
                 } else {
