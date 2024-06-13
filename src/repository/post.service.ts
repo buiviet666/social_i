@@ -22,6 +22,7 @@ export const getPosts = async () => {
                 };
                 tempArr.push(responseObj);
             });
+
             return tempArr;
         } else {
             console.log("no document");
@@ -30,6 +31,7 @@ export const getPosts = async () => {
         console.log(error);
     }
 };
+
 
 export const getPostByUserId = (id: string) => {
     const q = query(collection(db, COLLECTION_NAME), where("userId", "==", id));

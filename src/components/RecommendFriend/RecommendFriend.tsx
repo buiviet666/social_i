@@ -45,7 +45,7 @@ export default function RecommendFriend({ dataAcc }: RecommendFriendProps) {
             );
         } else {
             userFollower.userFollowers?.push(dataAcc.userId as never);
-            dataAcc?.userFollowing?.push(dataAcc.userId as never);
+            dataAcc?.userFollowing?.push(userFollower.userId as never);
 
             await updateFollowProfile(
                 userFollower.id!,
@@ -74,8 +74,8 @@ export default function RecommendFriend({ dataAcc }: RecommendFriendProps) {
         }
     }, [user]);
 
-    console.log("in ra thong tin ca nhan: ", dataAcc);
-    console.log("in ra danh sach: ", data);
+    // console.log("in ra thong tin ca nhan: ", dataAcc);
+    // console.log("in ra danh sach: ", data);
 
 
     return (
