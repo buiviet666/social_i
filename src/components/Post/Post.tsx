@@ -172,7 +172,7 @@ export default function Post({ data }: PostProps) {
     );
 
 
-    // console.log("thong tin bai dang: ", data);
+    console.log("thong tin bai dang: ", data);
 
 
     return (
@@ -273,7 +273,7 @@ export default function Post({ data }: PostProps) {
                             onCancel={() => setOpenLikes(false)}
                             cancelButtonProps={{ style: { display: 'none' } }}
                             okButtonProps={{ style: { display: 'none' } }}>
-                            <Likes data={data} />
+                            <Likes data={data.userlikes} />
                         </Modal>
                     </div>
                     <div style={{ marginTop: '8px', display: 'flex' }}>

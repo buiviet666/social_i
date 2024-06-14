@@ -1,5 +1,5 @@
 import { AppstoreOutlined, FlagOutlined, HeartOutlined, MoreOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Layout, Tabs, TabsProps } from 'antd';
+import { Avatar, Layout, Modal, Tabs, TabsProps } from 'antd';
 import { Content, Footer, Header } from 'antd/es/layout/layout';
 import { useEffect, useState } from 'react';
 import Layouts from '../../components/Layout/Layouts';
@@ -10,10 +10,15 @@ import { useUserAuth } from '../../context/UserAuthContext';
 import { DocumentResponse, Post, ProfileResponse } from '../Types';
 import { getPostByUserId, getPostLikes, getPostSave } from '../../repository/post.service';
 import { getUserProfile, updateFollowingProfile, updateFollowProfile } from '../../repository/user.service';
+import Follow from '../../components/PopUpPage/Follow/Follow';
+import PostEach from '../../components/PopUpPage/PostEach/PostEach';
 
 export default function Profile() {
 
     const { user } = useUserAuth();
+    const [openFollowers, setOpenFollowers] = useState(false);
+    const [openFollowing, setOpenFollowing] = useState(false);
+    const [openPost, setOpenPost] = useState(false);
     const [data, setData] = useState<DocumentResponse[]>([]);
     const [dataPostLikes, setDataPostLikes] = useState<DocumentResponse[]>([]);
     const [dataPostSave, setDataPostSave] = useState<DocumentResponse[]>([]);
@@ -152,11 +157,19 @@ export default function Profile() {
         }
     }
 
+    const [selectedItem, setSelectedItem] = useState<DocumentResponse>();
+
+    const handleClick = (itemPost: DocumentResponse) => {
+        console.log(itemPost);
+        setSelectedItem(itemPost);
+        setOpenPost(true)
+    }
+
     const renderPosts = () => {
         return data.map((item) => {
             return (
                 <div key={item.photos![0].uuid} className='tablePhotoProfile'>
-                    <img className='tableImgProfile' src={`${item.photos![0].cdnUrl}`} />
+                    <img className='tableImgProfile' src={`${item.photos![0].cdnUrl}`} onClick={() => handleClick(item)} />
                 </div>
             )
         })
@@ -233,7 +246,8 @@ export default function Profile() {
 
     console.log("in ra thong tin acc chinh: ", userProfileAcc);
     console.log("in ra thong tin: ", userInfo);
-    console.log("in ra id:", userId);
+    console.log("in ra thong tin bai viet: ", data);
+    console.log("in ra thu vua lay dc: ", selectedItem);
 
 
 
@@ -298,10 +312,36 @@ export default function Profile() {
                                             <span><strong>{data.length} </strong>Post</span>
                                         </li>
                                         <li>
-                                            <span><strong>{userProfileAcc?.userFollowers?.length} </strong>followers</span>
+                                            <span onClick={() => setOpenFollowers(true)}>
+                                                <strong>{userProfileAcc?.userFollowers?.length} </strong>followers
+                                            </span>
+                                            <Modal
+                                                title="Likes"
+                                                centered
+                                                open={openFollowers}
+                                                footer={null}
+                                                onOk={() => setOpenFollowers(false)}
+                                                onCancel={() => setOpenFollowers(false)}
+                                                cancelButtonProps={{ style: { display: 'none' } }}
+                                                okButtonProps={{ style: { display: 'none' } }}>
+                                                <Follow userInfo={userInfo.userFollowers} />
+                                            </Modal>
                                         </li>
                                         <li>
-                                            <span><strong>{userProfileAcc?.userFollowing?.length}</strong> following</span>
+                                            <span onClick={() => setOpenFollowing(true)}>
+                                                <strong>{userProfileAcc?.userFollowing?.length}</strong> following
+                                            </span>
+                                            <Modal
+                                                title="Likes"
+                                                centered
+                                                open={openFollowing}
+                                                footer={null}
+                                                onOk={() => setOpenFollowing(false)}
+                                                onCancel={() => setOpenFollowing(false)}
+                                                cancelButtonProps={{ style: { display: 'none' } }}
+                                                okButtonProps={{ style: { display: 'none' } }}>
+                                                <Follow userInfo={userInfo.userFollowing} />
+                                            </Modal>
                                         </li>
                                     </>
                                 ) : (
@@ -310,10 +350,36 @@ export default function Profile() {
                                             <span><strong>{data.length} </strong>Post</span>
                                         </li>
                                         <li>
-                                            <span><strong>{userInfo.userFollowers?.length} </strong>followers</span>
+                                            <span onClick={() => setOpenFollowers(true)}>
+                                                <strong>{userInfo.userFollowers?.length} </strong>followers
+                                            </span>
+                                            <Modal
+                                                title="Likes"
+                                                centered
+                                                open={openFollowers}
+                                                footer={null}
+                                                onOk={() => setOpenFollowers(false)}
+                                                onCancel={() => setOpenFollowers(false)}
+                                                cancelButtonProps={{ style: { display: 'none' } }}
+                                                okButtonProps={{ style: { display: 'none' } }}>
+                                                <Follow userInfo={userInfo.userFollowers} />
+                                            </Modal>
                                         </li>
                                         <li>
-                                            <span><strong>{userInfo.userFollowing?.length}</strong> following</span>
+                                            <span onClick={() => setOpenFollowing(true)}>
+                                                <strong>{userInfo.userFollowing?.length}</strong> following
+                                            </span>
+                                            <Modal
+                                                title="Likes"
+                                                centered
+                                                open={openFollowing}
+                                                footer={null}
+                                                onOk={() => setOpenFollowing(false)}
+                                                onCancel={() => setOpenFollowing(false)}
+                                                cancelButtonProps={{ style: { display: 'none' } }}
+                                                okButtonProps={{ style: { display: 'none' } }}>
+                                                <Follow userInfo={userInfo.userFollowing} />
+                                            </Modal>
                                         </li>
                                     </>
                                 )}
@@ -335,6 +401,19 @@ export default function Profile() {
                     <Footers />
                 </Footer>
             </Content >
+            <Modal
+                centered
+                open={openPost}
+                onOk={() => setOpenPost(false)}
+                onCancel={() => setOpenPost(false)}
+                footer={null}
+                width={'unset'}
+                style={{ maxHeight: 'calc(100vh - 40px)', maxWidth: 'calc(100% - 64px - 64px)' }}
+                cancelButtonProps={{ style: { display: 'none' } }}
+                okButtonProps={{ style: { display: 'none' } }}
+                closeIcon={null}>
+                <PostEach data={selectedItem!} userId={user?.uid as string} />
+            </Modal>
         </Layouts >
     );
 }

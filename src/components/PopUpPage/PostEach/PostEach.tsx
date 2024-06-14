@@ -37,7 +37,7 @@ export default function PostEach({ data, userId }: PostEachProps) {
         isLike?: boolean,
     }>({
         likes: data.likes,
-        isLike: data.userlikes?.some(number => number === data.userId) ? true : false,
+        isLike: data.userlikes?.some(number => number === userId) ? true : false,
     });
 
     const uploadLike = async (isVal: boolean) => {
@@ -47,9 +47,9 @@ export default function PostEach({ data, userId }: PostEachProps) {
         });
 
         if (isVal) {
-            data.userlikes?.push(data.userId as never);
+            data.userlikes?.push(userId as never);
         } else {
-            data.userlikes?.splice(data.userlikes?.indexOf(data.userId as never), 1);
+            data.userlikes?.splice(data.userlikes?.indexOf(userId as never), 1);
         }
 
         await uploadLikesOnPost(
@@ -62,7 +62,7 @@ export default function PostEach({ data, userId }: PostEachProps) {
     const [saveInfo, setSaveInfo] = useState<{
         isSave?: boolean,
     }>({
-        isSave: data.usersave?.some(infoSave => infoSave === data.userId) ? true : false,
+        isSave: data.usersave?.some(infoSave => infoSave === userId) ? true : false,
     });
 
     const uploadSave = async (isVal: boolean) => {
@@ -71,9 +71,9 @@ export default function PostEach({ data, userId }: PostEachProps) {
         });
 
         if (isVal) {
-            data.usersave?.push(data.userId as never);
+            data.usersave?.push(userId as never);
         } else {
-            data.usersave?.splice(data.usersave.indexOf(data.userId as never), 1);
+            data.usersave?.splice(data.usersave.indexOf(userId as never), 1);
         }
 
         await uploadSaveOnPost(
@@ -127,6 +127,8 @@ export default function PostEach({ data, userId }: PostEachProps) {
     );
 
     console.log("in ra post", data);
+    console.log("in ra id: ", userId);
+
 
     // const [loading, setLoading] = useState(false);
     // const [datatest, setData] = useState<DataType[]>([]);
@@ -273,7 +275,7 @@ export default function PostEach({ data, userId }: PostEachProps) {
                                         onCancel={() => setOpenLikes(false)}
                                         cancelButtonProps={{ style: { display: 'none' } }}
                                         okButtonProps={{ style: { display: 'none' } }}>
-                                        <Likes data={data} />
+                                        <Likes data={data.userlikes} />
                                     </Modal>
                                 </span>
                                 <span className="px-4 mb-4">date</span>

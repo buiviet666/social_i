@@ -79,7 +79,7 @@ export default function Layouts({ children }: LayoutsProps) {
                 <Avatar icon={itemsMenu.icon} style={{ background: 'none' }} />),
             () => {
                 if (itemsMenu.path) {
-                    history(itemsMenu.path, { state: { userId: userInfo.userId, displayName: userInfo.displayName, photoURL: userInfo.photoURL } });
+                    history(itemsMenu.path, { state: { userId: user?.uid } });
                 } else if (itemsMenu.render) {
                     if (itemsMenu.popUp) {
                         if (create.isOpen === false) {

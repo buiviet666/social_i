@@ -1,19 +1,20 @@
-import { Avatar, List } from "antd";
-import { ProfileResponse } from "../../../pages/Types";
-import { useEffect, useState } from "react";
-import { getUserProfile } from "../../../repository/user.service";
+import { Avatar, List } from 'antd';
+import { ProfileResponse } from '../../../pages/Types';
+import './index.scss';
+import { useEffect, useState } from 'react';
+import { getUserProfile } from '../../../repository/user.service';
 
-
-export interface LikesProps {
-    data?: string[];
+export interface IFollowProps {
+    userInfo?: string[];
 }
 
-export default function Likes({ data }: LikesProps) {
+export default function Follow({ userInfo }: IFollowProps) {
 
+    console.log("thong tin: ", userInfo);
     const [datatest, setData] = useState<ProfileResponse[]>([]);
     const getUserList = async () => {
         const profiles: ProfileResponse[] = [];
-        for (const userId of data!) {
+        for (const userId of userInfo!) {
             const profile = await getUserProfile(userId);
             if (profile) {
                 profiles.push(profile);
@@ -25,7 +26,6 @@ export default function Likes({ data }: LikesProps) {
     useEffect(() => {
         getUserList();
     }, []);
-
 
     return (
         <div style={{ height: 400, overflow: 'auto' }}>
