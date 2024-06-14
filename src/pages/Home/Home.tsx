@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { DocumentResponse, ProfileResponse } from '../Types';
 import { getPosts } from '../../repository/post.service';
 import { useNavigate } from 'react-router-dom';
-import { getUserProfile, getUsers } from '../../repository/user.service';
+import { getUserProfile } from '../../repository/user.service';
 
 
 export default function Home() {
@@ -27,7 +27,6 @@ export default function Home() {
     })
 
     const [data, setData] = useState<DocumentResponse[]>([]);
-    const [listUser, setListUser] = useState<ProfileResponse[]>([]);
 
     const getUserProfileAcc = async (userId: string) => {
         const getData: ProfileResponse = (await getUserProfile(userId)) || {};
@@ -36,18 +35,12 @@ export default function Home() {
         }
     };
 
-    const getListUser = async () => {
-        const getData: ProfileResponse[] = (await getUsers()) || [];
-        setListUser(getData);
-    }
-
     const getAllPost = async () => {
         const response: DocumentResponse[] = await getPosts() || [];
-        console.log("in ra bai viet: ", response);
+        const followingPost = response.filter((item) => userInfo.userFollowing?.includes(item.userId as never) || item.userId === userInfo.userId);
 
-        setData(response);
+        setData(followingPost);
     };
-
 
     const renderPostCard = () => {
         return data.map((item) => {
@@ -58,15 +51,16 @@ export default function Home() {
     useEffect(() => {
         if (user != null) {
             getUserProfileAcc(user.uid);
-            getAllPost();
-            getListUser();
         }
-    }, []);
+    }, [user]);
 
-    console.log("thong tin ca nhan: ", userInfo);
-    console.log("danh sach ban be: ", listUser);
+    useEffect(() => {
+        if (userInfo.userId) {
+            getAllPost();
+        }
+    }, [userInfo]);
 
-
+    console.log("in ra tt ca nhan: ", userInfo);
 
 
     return (

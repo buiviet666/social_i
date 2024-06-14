@@ -4,7 +4,7 @@ import './index.scss'
 import { DocumentResponse } from '../../pages/Types';
 import { useUserAuth } from '../../context/UserAuthContext';
 import { useState } from 'react';
-import { uploadLikesOnPost, uploadSaveOnPost } from '../../repository/post.service';
+import { deletePost, uploadLikesOnPost, uploadSaveOnPost } from '../../repository/post.service';
 import PostEach from '../PopUpPage/PostEach/PostEach';
 import Likes from '../PopUpPage/Likes/Likes';
 import Share from '../PopUpPage/Share/Share';
@@ -18,6 +18,7 @@ export default function Post({ data }: PostProps) {
 
     const { user } = useUserAuth();
     const history = useNavigate();
+
     const [openCmt, setOpenCmt] = useState(false);
     const [openLikes, setOpenLikes] = useState(false);
     const [openShare, setOpenShare] = useState(false);
@@ -70,6 +71,53 @@ export default function Post({ data }: PostProps) {
             data.id!,
             data.usersave!,
         )
+    };
+
+
+    // const [follow, setFollow] = useState<{
+    //     isFollow?: boolean,
+    // }>({
+    //     isFollow: userInfo.userFollowers?.includes(user?.uid as never) ? true : false,
+    // });
+
+    // const updateFollow = async (isVal: boolean) => {
+    //     setFollow({
+    //         isFollow: !follow.isFollow,
+    //     });
+    //     console.log(isVal);
+
+    //     if (userInfo.userFollowers?.includes(user?.uid as never)) {
+    //         userInfo.userFollowers?.splice(userInfo.userFollowers?.indexOf(user?.uid as never), 1);
+    //         userProfileAcc?.userFollowing?.splice(userProfileAcc.userFollowing?.indexOf(userInfo.userId as never), 1)
+
+    //         await updateFollowProfile(
+    //             userInfo.id!,
+    //             userInfo.userFollowers!,
+    //         );
+
+    //         await updateFollowingProfile(
+    //             userProfileAcc!.id!,
+    //             userProfileAcc!.userFollowing!,
+    //         );
+    //     } else {
+    //         userInfo.userFollowers?.push(user?.uid as never);
+    //         userProfileAcc?.userFollowing?.push(userInfo.userId as never);
+
+    //         await updateFollowProfile(
+    //             userInfo.id!,
+    //             userInfo.userFollowers!,
+    //         );
+
+    //         await updateFollowingProfile(
+    //             userProfileAcc!.id!,
+    //             userProfileAcc!.userFollowing!,
+    //         );
+    //     }
+    // };
+
+    const deletePostWithId = async (idPost: string) => {
+        await deletePost(idPost);
+        window.location.reload();
     }
 
     const items: MenuProps['items'] = data.userId === user!.uid ? (
@@ -82,7 +130,7 @@ export default function Post({ data }: PostProps) {
                 type: 'divider',
             },
             {
-                label: <a href="https://www.aliyun.com">Delete</a>,
+                label: <a onClick={() => deletePostWithId(data.id as never)}>Delete</a>,
                 key: '1',
             },
             {
@@ -103,7 +151,14 @@ export default function Post({ data }: PostProps) {
                 type: 'divider',
             },
             {
-                label: <a href="https://www.aliyun.com">Save</a>,
+                label:
+                    <>
+                        {saveInfo.isSave ? (
+                            <a onClick={() => uploadSave(!saveInfo.isSave)}>unSave</a>
+                        ) : (
+                            <a onClick={() => uploadSave(!saveInfo.isSave)}>Save</a>
+                        )}
+                    </>,
                 key: '1',
             },
             {
