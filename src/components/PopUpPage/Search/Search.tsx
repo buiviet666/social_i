@@ -1,93 +1,86 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { Avatar, Divider, Input, List } from 'antd';
 import './index.scss';
-import { CloseOutlined } from '@ant-design/icons';
-
-export interface SearchProps {
-}
+import { collection, getDocs, query } from 'firebase/firestore';
+import { db } from '../../../firebaseConfig';
+import { ProfileResponse, userProfile } from '../../../pages/Types';
+import { useNavigate } from 'react-router-dom';
 
 export function Search() {
-    // props: SearchProps
 
-    const { Search } = Input;
-    const data = [
-        {
-            title: 'Ant Design Title 1',
-        },
-        {
-            title: 'Ant Design Title 2',
-        },
-        {
-            title: 'Ant Design Title 3',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 4',
-        },
-        {
-            title: 'Ant Design Title 999',
-        },
-    ];
+    const history = useNavigate();
+    const [users, setUsers] = useState<ProfileResponse[]>([]);
+    const [searchText, setSearchText] = useState<string>('');
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        console.log(e);
+    const handleSearch = async (value: string) => {
+        setSearchText(value);
     };
+
+    useEffect(() => {
+        if (searchText) {
+            const fetchUsers = async () => {
+                const q = query(collection(db, "user"));
+                const querySnapShot = await getDocs(q);
+                const result: ProfileResponse[] = [];
+                if (querySnapShot.size > 0) {
+                    querySnapShot.forEach((doc) => {
+                        const data = doc.data() as userProfile;
+                        if (data.displayName!.toLowerCase().includes(searchText.toLowerCase())) {
+                            const responseObj: ProfileResponse = {
+                                id: doc.id,
+                                ...data,
+                            };
+                            result.push(responseObj);
+                        }
+                    });
+                    setUsers(result);
+                } else {
+                    console.log("no doc");
+                }
+            };
+            fetchUsers();
+        } else {
+            setUsers([]);
+        }
+    }, [searchText]);
+
 
     return (
         <div className='popupSearch__main'>
             <div className='popupSearch__title'>
                 <div>
-                    <span><strong>Search</strong></span>
+                    <span>
+                        <strong>Search</strong>
+                    </span>
                 </div>
             </div>
             <div className='popupSearch__content'>
                 <div className='popupSearch__content__input'>
-                    <Search placeholder="input search loading with enterButton" loading enterButton allowClear onChange={onChange} />
+                    <Input
+                        placeholder="input search user"
+                        variant="filled"
+                        allowClear
+                        onChange={(e) => handleSearch(e.target.value)}
+                        value={searchText} />
                 </div>
                 <Divider />
                 <div className='popupSearch__content__data'>
                     <div className='popupSearch__content__data-text'>
-                        <span><strong>Recently</strong></span>
-                        <span style={{ color: 'rgb(0, 149, 246)' }}><strong>Delete</strong></span>
+                        {/* <span><strong>Recently</strong></span>
+                        <span style={{ color: 'rgb(0, 149, 246)' }}><strong>Delete</strong></span> */}
                     </div>
                     <div style={{ margin: '8px 0' }}>
                         <List
                             itemLayout="horizontal"
-                            dataSource={data}
-                            renderItem={(item, index) => (
+                            dataSource={users}
+                            renderItem={(item) => (
                                 <List.Item
                                     style={{ padding: '8px 24px' }}
-                                    actions={[<a href='#'><CloseOutlined /></a>]}>
+                                    actions={[<a href='#'>follow</a>]}>
                                     <List.Item.Meta
-                                        avatar={<Avatar src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`} />}
-                                        title={<a href="https://ant.design">{item.title}</a>}
-                                        description="Real name"
+                                        avatar={<Avatar src={item.photoURL} />}
+                                        title={<a onClick={() => history("/profile", { state: { userId: item.userId } })}>{item.displayName}</a>}
+                                        description={item.bio}
                                     />
                                 </List.Item>
                             )}

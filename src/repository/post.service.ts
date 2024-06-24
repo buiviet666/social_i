@@ -53,6 +53,13 @@ export const getPost = (id: string) => {
     return getDoc(docRef);
 };
 
+export const updatePost = async (id: string, post: DocumentResponse) => {
+    const docRef = doc(db, COLLECTION_NAME, id);
+    return updateDoc(docRef, {
+        ...post,
+    });
+};
+
 export const deletePost = (id: string) => {
     return deleteDoc(doc(db, COLLECTION_NAME, id));
 };

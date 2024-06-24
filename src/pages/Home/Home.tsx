@@ -38,7 +38,6 @@ export default function Home() {
     const getAllPost = async () => {
         const response: DocumentResponse[] = await getPosts() || [];
         const followingPost = response.filter((item) => userInfo.userFollowing?.includes(item.userId as never) || item.userId === userInfo.userId);
-
         setData(followingPost);
     };
 
@@ -59,9 +58,6 @@ export default function Home() {
             getAllPost();
         }
     }, [userInfo]);
-
-    console.log("in ra tt ca nhan: ", userInfo);
-
 
     return (
         <Layouts>
@@ -84,7 +80,9 @@ export default function Home() {
                         ) : (
                             <Avatar icon={<UserOutlined />} />
                         )}
-                        title={<a onClick={() => history("/profile", { state: { userId: userInfo.userId } })}><strong>{userInfo.displayName ? userInfo.displayName : user?.email}</strong></a>}
+                        title={<a onClick={() => history("/profile", { state: { userId: userInfo.userId } })}>
+                            <strong>{userInfo.displayName ? userInfo.displayName : user?.email}</strong>
+                        </a>}
                         description={userInfo.displayName ? user?.email : ""} />
                     <RecommendFriend dataAcc={userInfo} />
                     <Footer style={{ background: 'none', color: '#C7C7C7' }}>

@@ -1,37 +1,28 @@
 import { Avatar, Carousel, Divider, Dropdown, Input, MenuProps, Modal, Tooltip } from "antd";
-import { DocumentResponse } from "../../../pages/Types";
+import { DocumentResponse, ProfileResponse } from "../../../pages/Types";
 import "./index.scss";
 import { CommentOutlined, FlagOutlined, HeartOutlined, HeartTwoTone, MoreOutlined, SendOutlined, SmileOutlined, UserOutlined } from "@ant-design/icons";
 import { useState } from "react";
 // import InfiniteScroll from "react-infinite-scroll-component";
-import { uploadLikesOnPost, uploadSaveOnPost } from "../../../repository/post.service";
+import { deletePost, uploadLikesOnPost, uploadSaveOnPost } from "../../../repository/post.service";
 import { useNavigate } from "react-router-dom";
-import Likes from "../Likes/Likes";
+import Follow from "../Follow/Follow";
+import EditPost from "../EditPost/EditPost";
+import { updateFollowingProfile, updateFollowProfile } from "../../../repository/user.service";
+
 export interface PostEachProps {
     data: DocumentResponse;
     userId: string;
+    userProfileAcc?: ProfileResponse;
+    userProfileFriend?: ProfileResponse;
 }
 
-// interface DataType {
-//     gender: string;
-//     name: {
-//         title: string;
-//         first: string;
-//         last: string;
-//     };
-//     email: string;
-//     picture: {
-//         large: string;
-//         medium: string;
-//         thumbnail: string;
-//     };
-//     nat: string;
-// }
 
-export default function PostEach({ data, userId }: PostEachProps) {
+export default function PostEach({ data, userId, userProfileAcc, userProfileFriend }: PostEachProps) {
 
     const history = useNavigate();
     const [openLikes, setOpenLikes] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
     const [likesInfo, setLikesInfo] = useState<{
         likes?: number,
         isLike?: boolean,
@@ -82,52 +73,82 @@ export default function PostEach({ data, userId }: PostEachProps) {
         )
     };
 
+    const uploadUnFollow = async () => {
+        userProfileAcc?.userFollowing?.splice(userProfileAcc.userFollowing.indexOf(userProfileFriend?.userId as never), 1);
+        userProfileFriend?.userFollowers?.splice(userProfileFriend?.userFollowers?.indexOf(userProfileAcc?.userId as never), 1);
+
+        await updateFollowProfile(
+            userProfileFriend!.id!,
+            userProfileFriend!.userFollowers!,
+        );
+
+        await updateFollowingProfile(
+            userProfileAcc!.id!,
+            userProfileAcc!.userFollowing!,
+        );
+        window.location.reload();
+    }
+
+    const deletePostWithId = async (idPost: string) => {
+        await deletePost(idPost);
+        window.location.reload();
+    }
+
     const items: MenuProps['items'] = data.userId === userId ? (
         [
             {
-                label: <a href="https://www.antgroup.com">Edit</a>,
+                label: <a onClick={() => setOpenEdit(true)}>Edit</a>,
                 key: '0',
             },
             {
                 type: 'divider',
             },
             {
-                label: <a href="https://www.aliyun.com">Delete</a>,
+                label: <a onClick={() => deletePostWithId(data.id as never)}>Delete</a>,
                 key: '1',
             },
             {
                 type: 'divider',
             },
             {
-                label: <a href="https://www.aliyun.com">Cancel</a>,
+                label: <a >Cancel</a>,
                 key: '3',
             },
         ]
     ) : (
         [
             {
-                label: <a href="https://www.antgroup.com">Unfollow</a>,
+                label: <a onClick={() => uploadUnFollow()}>Unfollow</a>,
                 key: '0',
             },
             {
                 type: 'divider',
             },
             {
-                label: <a href="https://www.aliyun.com">Save</a>,
+                label:
+                    <>
+                        {saveInfo.isSave ? (
+                            <a onClick={() => uploadSave(!saveInfo.isSave)}>unSave</a>
+                        ) : (
+                            <a onClick={() => uploadSave(!saveInfo.isSave)}>Save</a>
+                        )}
+                    </>,
                 key: '1',
             },
             {
                 type: 'divider',
             },
             {
-                label: <a href="https://www.aliyun.com">Cancel</a>,
+                label: <a >Cancel</a>,
                 key: '3',
             },
         ]
     );
 
     console.log("in ra post", data);
-    console.log("in ra id: ", userId);
+    console.log("in ra id: ", userProfileAcc);
+    console.log("in ra bb:", userProfileFriend);
+
 
 
     // const [loading, setLoading] = useState(false);
@@ -196,7 +217,7 @@ export default function PostEach({ data, userId }: PostEachProps) {
                 </div>
                 <Divider className="m-0" />
                 <div className="flex flex-col">
-                    <div style={{ height: 500, overflow: 'auto', scrollbarWidth: 'none' }} className="p-4">
+                    <div style={{ height: 400, overflow: 'auto', scrollbarWidth: 'none' }} className="p-4">
                         <div className="flex flex-row pr-4 pb-4">
                             <div>
                                 {data.photoURL ? (
@@ -205,11 +226,11 @@ export default function PostEach({ data, userId }: PostEachProps) {
                                     <Avatar icon={<UserOutlined />} />
                                 )}
                             </div>
-                            <div className="flex flex-row ml-4 self-center">
-                                <a onClick={() => history("/profile", { state: { userId: data.userId } })}>
-                                    <strong>{data.username} &nbsp;</strong>
+                            <div className="ml-3.5 self-center" style={{ wordBreak: 'break-all' }}>
+                                <a className="mr-1" onClick={() => history("/profile", { state: { userId: data.userId } })}>
+                                    <strong>{data.username}</strong>
                                 </a>
-                                <div>{data.caption}</div>
+                                {data.caption}
                             </div>
                         </div>
                         {/* <InfiniteScroll
@@ -264,8 +285,9 @@ export default function PostEach({ data, userId }: PostEachProps) {
                             </div>
                             <div className="flex flex-col">
                                 <span className="px-4 mb-1">
-
-                                    <strong onClick={() => setOpenLikes(true)} style={{ cursor: 'pointer' }}>{likesInfo.likes} Likes</strong>
+                                    <a onClick={() => setOpenLikes(true)} style={{ cursor: 'pointer' }}>
+                                        <strong>{likesInfo.likes} Likes</strong>
+                                    </a>
                                     <Modal
                                         title="Likes"
                                         centered
@@ -275,7 +297,7 @@ export default function PostEach({ data, userId }: PostEachProps) {
                                         onCancel={() => setOpenLikes(false)}
                                         cancelButtonProps={{ style: { display: 'none' } }}
                                         okButtonProps={{ style: { display: 'none' } }}>
-                                        <Likes data={data.userlikes} />
+                                        <Follow userInfo={data.userlikes} userInfoAccMain={userProfileAcc} />
                                     </Modal>
                                 </span>
                                 <span className="px-4 mb-4">date</span>
@@ -294,6 +316,19 @@ export default function PostEach({ data, userId }: PostEachProps) {
                     </div>
                 </div>
             </div>
+            <Modal
+                centered
+                open={openEdit}
+                onOk={() => setOpenEdit(false)}
+                onCancel={() => setOpenEdit(false)}
+                footer={null}
+                width={'unset'}
+                style={{ maxHeight: 'calc(100vh - 40px)', maxWidth: 'calc(100% - 64px - 64px)' }}
+                cancelButtonProps={{ style: { display: 'none' } }}
+                okButtonProps={{ style: { display: 'none' } }}
+                closeIcon={null}>
+                <EditPost datapost={data} />
+            </Modal>
         </div>
     );
 }

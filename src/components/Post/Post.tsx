@@ -1,14 +1,16 @@
 import { CommentOutlined, FlagOutlined, HeartOutlined, HeartTwoTone, MoreOutlined, SendOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Carousel, Divider, Dropdown, Input, MenuProps, Modal, Tooltip } from 'antd';
 import './index.scss'
-import { DocumentResponse } from '../../pages/Types';
+import { DocumentResponse, ProfileResponse } from '../../pages/Types';
 import { useUserAuth } from '../../context/UserAuthContext';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { deletePost, uploadLikesOnPost, uploadSaveOnPost } from '../../repository/post.service';
 import PostEach from '../PopUpPage/PostEach/PostEach';
-import Likes from '../PopUpPage/Likes/Likes';
 import Share from '../PopUpPage/Share/Share';
 import { useNavigate } from 'react-router-dom';
+import EditPost from '../PopUpPage/EditPost/EditPost';
+import { getUserProfile, updateFollowingProfile, updateFollowProfile } from '../../repository/user.service';
+import Follow from '../PopUpPage/Follow/Follow';
 
 interface PostProps {
     data: DocumentResponse;
@@ -22,6 +24,24 @@ export default function Post({ data }: PostProps) {
     const [openCmt, setOpenCmt] = useState(false);
     const [openLikes, setOpenLikes] = useState(false);
     const [openShare, setOpenShare] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
+    const [userProfileAcc, setUserProfileAcc] = useState<ProfileResponse>();
+    const [userProfileFriend, setUserProfileFriend] = useState<ProfileResponse>();
+
+    const getUserProfileAcc = async (userId: string) => {
+        const getData: ProfileResponse = (await getUserProfile(userId)) || {};
+        if (getData.displayName) {
+            setUserProfileAcc(getData);
+        }
+    }
+
+    const getUserProfileFriend = async (userIdF: string) => {
+        const getData: ProfileResponse = (await getUserProfile(userIdF)) || {};
+        if (getData.displayName) {
+            setUserProfileFriend(getData);
+        }
+    }
+
     const [likesInfo, setLikesInfo] = useState<{
         likes?: number,
         isLike?: boolean,
@@ -73,47 +93,21 @@ export default function Post({ data }: PostProps) {
         )
     };
 
+    const uploadUnFollow = async () => {
+        userProfileAcc?.userFollowing?.splice(userProfileAcc.userFollowing.indexOf(userProfileFriend?.userId as never), 1);
+        userProfileFriend?.userFollowers?.splice(userProfileFriend?.userFollowers?.indexOf(userProfileAcc?.userId as never), 1);
 
-    // const [follow, setFollow] = useState<{
-    //     isFollow?: boolean,
-    // }>({
-    //     isFollow: userInfo.userFollowers?.includes(user?.uid as never) ? true : false,
-    // });
+        await updateFollowProfile(
+            userProfileFriend!.id!,
+            userProfileFriend!.userFollowers!,
+        );
 
-    // const updateFollow = async (isVal: boolean) => {
-    //     setFollow({
-    //         isFollow: !follow.isFollow,
-    //     });
-    //     console.log(isVal);
-
-    //     if (userInfo.userFollowers?.includes(user?.uid as never)) {
-    //         userInfo.userFollowers?.splice(userInfo.userFollowers?.indexOf(user?.uid as never), 1);
-    //         userProfileAcc?.userFollowing?.splice(userProfileAcc.userFollowing?.indexOf(userInfo.userId as never), 1)
-
-    //         await updateFollowProfile(
-    //             userInfo.id!,
-    //             userInfo.userFollowers!,
-    //         );
-
-    //         await updateFollowingProfile(
-    //             userProfileAcc!.id!,
-    //             userProfileAcc!.userFollowing!,
-    //         );
-    //     } else {
-    //         userInfo.userFollowers?.push(user?.uid as never);
-    //         userProfileAcc?.userFollowing?.push(userInfo.userId as never);
-
-    //         await updateFollowProfile(
-    //             userInfo.id!,
-    //             userInfo.userFollowers!,
-    //         );
-
-    //         await updateFollowingProfile(
-    //             userProfileAcc!.id!,
-    //             userProfileAcc!.userFollowing!,
-    //         );
-    //     }
-    // };
+        await updateFollowingProfile(
+            userProfileAcc!.id!,
+            userProfileAcc!.userFollowing!,
+        );
+        window.location.reload();
+    }
 
     const deletePostWithId = async (idPost: string) => {
         await deletePost(idPost);
@@ -123,7 +117,7 @@ export default function Post({ data }: PostProps) {
     const items: MenuProps['items'] = data.userId === user!.uid ? (
         [
             {
-                label: <a href="https://www.antgroup.com">Edit</a>,
+                label: <a onClick={() => setOpenEdit(true)}>Edit</a>,
                 key: '0',
             },
             {
@@ -137,14 +131,14 @@ export default function Post({ data }: PostProps) {
                 type: 'divider',
             },
             {
-                label: <a href="https://www.aliyun.com">Cancel</a>,
+                label: <a >Cancel</a>,
                 key: '3',
             },
         ]
     ) : (
         [
             {
-                label: <a href="https://www.antgroup.com">Unfollow</a>,
+                label: <a onClick={() => uploadUnFollow()}>Unfollow</a>,
                 key: '0',
             },
             {
@@ -165,14 +159,24 @@ export default function Post({ data }: PostProps) {
                 type: 'divider',
             },
             {
-                label: <a href="https://www.aliyun.com">Cancel</a>,
+                label: <a >Cancel</a>,
                 key: '3',
             },
         ]
     );
 
+    useEffect(() => {
+        if (user?.uid != null) {
+            getUserProfileAcc(user?.uid as never);
+            getUserProfileFriend(data.userId as never);
+        }
+    }, []);
 
-    console.log("thong tin bai dang: ", data);
+    // console.log("inra da: ", data);
+
+    // console.log("in ra: ", userProfileAcc);
+    // console.log("inrabb: ", userProfileFriend);
+
 
 
     return (
@@ -229,12 +233,11 @@ export default function Post({ data }: PostProps) {
                                     onOk={() => setOpenCmt(false)}
                                     onCancel={() => setOpenCmt(false)}
                                     footer={null}
-                                    width={'unset'}
-                                    style={{ maxHeight: 'calc(100vh - 40px)', maxWidth: 'calc(100% - 64px - 64px)' }}
+                                    width={'inherit'}
                                     cancelButtonProps={{ style: { display: 'none' } }}
                                     okButtonProps={{ style: { display: 'none' } }}
                                     closeIcon={null}>
-                                    <PostEach data={data} userId={user?.uid as string} />
+                                    <PostEach data={data} userId={user?.uid as string} userProfileAcc={userProfileAcc} userProfileFriend={userProfileFriend} />
                                 </Modal>
                             </>
                             <>
@@ -273,16 +276,14 @@ export default function Post({ data }: PostProps) {
                             onCancel={() => setOpenLikes(false)}
                             cancelButtonProps={{ style: { display: 'none' } }}
                             okButtonProps={{ style: { display: 'none' } }}>
-                            <Likes data={data.userlikes} />
+                            <Follow userInfo={data.userlikes} userInfoAccMain={userProfileAcc} />
                         </Modal>
                     </div>
-                    <div style={{ marginTop: '8px', display: 'flex' }}>
-                        <div style={{ marginRight: '4px' }}>
-                            <a onClick={() => history("/profile", { state: { userId: data.userId } })}><strong>{data.username ? data.username : data.emailUser}</strong></a>
-                        </div>
-                        <div>
-                            {data.caption}
-                        </div>
+                    <div style={{ marginTop: '8px', wordBreak: 'break-all', lineHeight: 1.3 }}>
+                        <a onClick={() => history("/profile", { state: { userId: data.userId } })} className='mr-1'>
+                            <strong>{data.username ? data.username : data.emailUser}</strong>
+                        </a>
+                        <span>{data.caption}</span>
                     </div>
                     <div style={{ marginTop: '8px', color: 'rgba(0,0,0,.25)', cursor: 'pointer' }} onClick={() => setOpenCmt(true)}>View comment...</div>
                     <div style={{ marginTop: '8px' }}>
@@ -295,6 +296,19 @@ export default function Post({ data }: PostProps) {
                 </div>
             </div>
             <Divider />
+            <Modal
+                centered
+                open={openEdit}
+                onOk={() => setOpenEdit(false)}
+                onCancel={() => setOpenEdit(false)}
+                footer={null}
+                width={'60%'}
+                style={{ maxHeight: 'calc(100vh - 40px)', maxWidth: 'calc(100% - 64px - 64px)' }}
+                cancelButtonProps={{ style: { display: 'none' } }}
+                okButtonProps={{ style: { display: 'none' } }}
+                closeIcon={null}>
+                <EditPost datapost={data} />
+            </Modal>
         </div>
     );
 }

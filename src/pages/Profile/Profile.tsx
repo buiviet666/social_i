@@ -34,7 +34,7 @@ export default function Profile() {
         bio: "",
     };
 
-    const [userProfileAcc, setUserProfileAcc] = useState<ProfileResponse>()
+    const [userProfileAcc, setUserProfileAcc] = useState<ProfileResponse>(intialUserProfile);
     const [userInfo, setUserInfo] = useState<ProfileResponse>(intialUserProfile);
     const [follow, setFollow] = useState<{
         isFollow?: boolean,
@@ -169,7 +169,7 @@ export default function Profile() {
         return data.map((item) => {
             return (
                 <div key={item.photos![0].uuid} className='tablePhotoProfile'>
-                    <img className='tableImgProfile' src={`${item.photos![0].cdnUrl}`} onClick={() => handleClick(item)} />
+                    <img className='tableImgProfile cursor-pointer' src={`${item.photos![0].cdnUrl}`} onClick={() => handleClick(item)} />
                 </div>
             )
         })
@@ -244,10 +244,10 @@ export default function Profile() {
         }
     }, []);
 
-    console.log("in ra thong tin acc chinh: ", userProfileAcc);
-    console.log("in ra thong tin: ", userInfo);
-    console.log("in ra thong tin bai viet: ", data);
-    console.log("in ra thu vua lay dc: ", selectedItem);
+    // console.log("in ra thong tin acc chinh: ", userProfileAcc);
+    // console.log("in ra thong tin: ", userInfo);
+    // console.log("in ra thong tin bai viet: ", data);
+    // console.log("in ra thu vua lay dc: ", selectedItem);
 
 
 
@@ -276,10 +276,10 @@ export default function Profile() {
                                         <strong>{userInfo.displayName}</strong>
                                     </span>
                                 </div>
-                                <div style={{ display: 'flex' }}>
+                                <div className='flex'>
                                     {userInfo.userId === user?.uid ? (
                                         <>
-                                            <div style={{ display: 'flex' }}>
+                                            <div className='flex'>
                                                 <div className='profile__fix profile_btn_fix'>
                                                     <span style={{ cursor: 'pointer' }} onClick={() => history("/setting", { state: userInfo })}>Edit profile</span>
                                                 </div>
@@ -309,14 +309,14 @@ export default function Profile() {
                                 {userProfileAcc?.userId === userInfo.userId ? (
                                     <>
                                         <li>
-                                            <span><strong>{data.length} </strong>Post</span>
+                                            <span><strong>{data?.length} </strong>Post</span>
                                         </li>
                                         <li>
-                                            <span onClick={() => setOpenFollowers(true)}>
+                                            <a className='cursor-pointer' onClick={() => setOpenFollowers(true)}>
                                                 <strong>{userProfileAcc?.userFollowers?.length} </strong>followers
-                                            </span>
+                                            </a>
                                             <Modal
-                                                title="Likes"
+                                                title="followers"
                                                 centered
                                                 open={openFollowers}
                                                 footer={null}
@@ -324,15 +324,15 @@ export default function Profile() {
                                                 onCancel={() => setOpenFollowers(false)}
                                                 cancelButtonProps={{ style: { display: 'none' } }}
                                                 okButtonProps={{ style: { display: 'none' } }}>
-                                                <Follow userInfo={userInfo.userFollowers} />
+                                                <Follow userInfo={userInfo.userFollowers} userInfoAccMain={userProfileAcc} />
                                             </Modal>
                                         </li>
                                         <li>
-                                            <span onClick={() => setOpenFollowing(true)}>
+                                            <a className='cursor-pointer' onClick={() => setOpenFollowing(true)}>
                                                 <strong>{userProfileAcc?.userFollowing?.length}</strong> following
-                                            </span>
+                                            </a>
                                             <Modal
-                                                title="Likes"
+                                                title="following"
                                                 centered
                                                 open={openFollowing}
                                                 footer={null}
@@ -340,7 +340,7 @@ export default function Profile() {
                                                 onCancel={() => setOpenFollowing(false)}
                                                 cancelButtonProps={{ style: { display: 'none' } }}
                                                 okButtonProps={{ style: { display: 'none' } }}>
-                                                <Follow userInfo={userInfo.userFollowing} />
+                                                <Follow userInfo={userInfo.userFollowing} userInfoAccMain={userProfileAcc} />
                                             </Modal>
                                         </li>
                                     </>
@@ -362,7 +362,7 @@ export default function Profile() {
                                                 onCancel={() => setOpenFollowers(false)}
                                                 cancelButtonProps={{ style: { display: 'none' } }}
                                                 okButtonProps={{ style: { display: 'none' } }}>
-                                                <Follow userInfo={userInfo.userFollowers} />
+                                                <Follow userInfo={userInfo.userFollowers} userInfoAccMain={userProfileAcc} />
                                             </Modal>
                                         </li>
                                         <li>
@@ -378,7 +378,7 @@ export default function Profile() {
                                                 onCancel={() => setOpenFollowing(false)}
                                                 cancelButtonProps={{ style: { display: 'none' } }}
                                                 okButtonProps={{ style: { display: 'none' } }}>
-                                                <Follow userInfo={userInfo.userFollowing} />
+                                                <Follow userInfo={userInfo.userFollowing} userInfoAccMain={userProfileAcc} />
                                             </Modal>
                                         </li>
                                     </>
