@@ -29,6 +29,7 @@ export function Create() {
         caption: "",
         userlikes: [],
         usersave: [],
+        comments: [],
     });
 
     const success = () => {

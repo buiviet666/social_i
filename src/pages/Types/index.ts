@@ -27,6 +27,7 @@ export interface Post {
     photoURL?: string;
     emailUser?: string;
     usersave?: string[];
+    comments?: CmtUserMeta[];
 }
 
 export interface PhotoMeta {
@@ -46,6 +47,17 @@ export interface DocumentResponse {
     emailUser?: string;
     photoURL?: string;
     usersave?: string[];
+    comments?: CmtUserMeta[];
+}
+
+export interface CmtUserMeta {
+    comment: string;
+    date: Date;
+    userId: string;
+    userLikes: string[];
+    postId: string;
+    photoURL?: string;
+    username?: string;
 }
 
 export interface ProfileInfo {
